@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/panel_bottom.css';
+import '../css/panel_bottom.css';
 
 const BottomPanel = () => {
   const currentYear = new Date().getFullYear();

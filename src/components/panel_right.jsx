@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/panel_right.css';
+import '../css/panel_right.css';
 
 const RightPanel = () => {
   const advertisements = [
