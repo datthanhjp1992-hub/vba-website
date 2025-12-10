@@ -1,0 +1,56 @@
+.bottom-panel {
+  background-color: #34495e;
+  color: white;
+  padding: 2rem 0 1rem;
+  margin-top: auto;
+}
+
+.bottom-panel .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-content > div {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #ecf0f1;
+}
+
+.footer-content a {
+  color: #bdc3c7;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+.footer-content a:hover {
+  color: #3498db;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.copyright {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #4a6572;
+  color: #95a5a6;
+  font-size: 0.9rem;
+}
