@@ -1,10 +1,10 @@
 import React from 'react';
-import TopPanel from './components/TopPanel';
-import BottomPanel from './components/BottomPanel';
-import LeftPanel from './components/LeftPanel';
-import CenterPanel from './components/CenterPanel';
-import RightPanel from './components/RightPanel';
-import './App.css';
+import TopPanel from './components/panel_top';
+import BottomPanel from './components/panel_bottom';
+import LeftPanel from './components/panel_left';
+import CenterPanel from './components/panel_center';
+import RightPanel from './components/panel_right';
+import './css/App.css';
 
 function App() {
   return (

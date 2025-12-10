@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../css/panel_left.css';
+import '../css/panel_left.css';
 
 const LeftPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

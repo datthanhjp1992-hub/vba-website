@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/panel_center.css';
+import '../css/panel_center.css';
 
 const CenterPanel = () => {
   const articles = [
