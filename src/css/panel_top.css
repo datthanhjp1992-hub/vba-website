@@ -1,0 +1,40 @@
+.top-panel {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-panel .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-panel .logo {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.top-panel .navigation {
+  display: flex;
+  gap: 2rem;
+}
+
+.top-panel .navigation a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.top-panel .navigation a:hover {
+  color: #3498db;
+}
