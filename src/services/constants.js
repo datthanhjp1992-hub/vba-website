@@ -7,7 +7,7 @@
 
 // Server configuration
 export const SERVER_CONFIG = {
-    BASE_URL: 'https://my-python-app-pm7j.onrender.com/',
+    BASE_URL: 'http://localhost:5000',
     API_VERSION: 'v1',
     TIMEOUT: 30000, // 30 seconds
 };
@@ -128,6 +128,13 @@ export const PAGINATION = {
     PAGE_SIZES: [5, 10, 20, 50],
 };
 
+// Demo accounts for testing
+export const DEMO_ACCOUNTS = [
+    { account: 'admin', password: 'admin123', username: 'Administrator', authorities: 1 },
+    { account: 'user1', password: 'user123', username: 'Người dùng 1', authorities: 0 },
+    { account: 'moderator', password: 'mod123', username: 'Người kiểm duyệt', authorities: 2 },
+];
+
 // UI constants
 export const UI_CONSTANTS = {
     DEBOUNCE_DELAY: 300, // ms
@@ -221,7 +228,6 @@ export const validatePassword = (password) => {
         return { valid: false, message: 'Mật khẩu không được để trống' };
     }
     
-    /*
     if (password.length < VALIDATION_RULES.PASSWORD.MIN_LENGTH) {
         return { 
             valid: false, 
@@ -242,7 +248,7 @@ export const validatePassword = (password) => {
             message: 'Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số' 
         };
     }
-    */
+    
     return { valid: true, message: '' };
 };
 
@@ -260,6 +266,7 @@ export default {
     VALIDATION_RULES,
     DATE_FORMATS,
     PAGINATION,
+    DEMO_ACCOUNTS,
     UI_CONSTANTS,
     getApiUrl,
     getAuthorityName,
