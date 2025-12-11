@@ -6,7 +6,6 @@ import AccountService from '../services/account_service';
 import { 
     VALIDATION_RULES,
     ERROR_MESSAGES,
-    DEMO_ACCOUNTS,
     getAuthorityName,
     getAuthorityColor,
     validateAccount,
@@ -172,6 +171,7 @@ const LeftPanel = () => {
         <a href="/forgot-password">Quên mật khẩu?</a>
         <a href="/register">Đăng ký tài khoản</a>
       </div>
+      
       
     </form>
   );

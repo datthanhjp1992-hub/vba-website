@@ -260,7 +260,6 @@ export default {
     VALIDATION_RULES,
     DATE_FORMATS,
     PAGINATION,
-    DEMO_ACCOUNTS,
     UI_CONSTANTS,
     getApiUrl,
     getAuthorityName,
