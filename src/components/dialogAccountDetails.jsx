@@ -15,7 +15,7 @@ const DialogAccountDetails = ({ userId, onBack }) => {
   const fetchUserDetails = async () => {
     try {
       setIsLoading(true);
-      const data = await AccountService.getUserDetails(userId);
+      const data = await AccountService.getAccountDetail(userId);
       setUserData(data);
     } catch (err) {
       setError('Không thể tải thông tin người dùng');
