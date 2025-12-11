@@ -27,9 +27,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NODE_ENV: production
 
-      - run: npm install gh-pages --save-dev
-      
       - name: Add .nojekyll
         run: touch ./dist/.nojekyll
 
