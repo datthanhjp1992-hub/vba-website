@@ -1,5 +1,3 @@
-//[file name]: deploy.yml
-//[file content begin]
 name: Deploy to GitHub Pages
 
 on:
@@ -61,4 +59,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-//[file content end]
