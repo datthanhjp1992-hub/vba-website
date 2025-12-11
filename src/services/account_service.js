@@ -346,6 +346,56 @@ class AccountService {
         
         return isModerator(user.authorities);
     }
+
+    /**
+     * Kiểm tra account đã tồn tại chưa
+     * @param {string} account - Tên đăng nhập cần kiểm tra
+     * @returns {Promise} Promise với kết quả kiểm tra
+     */
+        static async checkAccount(account) {
+            try {
+                // Validate input
+                const accountValidation = validateAccount(account);
+                if (!accountValidation.valid) {
+                    return {
+                        success: false,
+                        exists: true,
+                        message: accountValidation.message
+                    };
+                }
+    
+                const url = getApiUrl(
+                    API_ENDPOINTS.ACCOUNT.CHECK
+                ) + `?account=${encodeURIComponent(account)}`;
+    
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+                });
+    
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Lỗi khi kiểm tra account');
+                }
+    
+                return {
+                    success: data.success,
+                    exists: data.exists || false,
+                    message: data.message || ''
+                };
+            } catch (error) {
+                if (error.name === 'TimeoutError') {
+                    throw new Error('Request timeout. Vui lòng thử lại sau.');
+                }
+                console.error('Check account error:', error);
+                throw error;
+            }
+        }
 }
 
 export default AccountService;

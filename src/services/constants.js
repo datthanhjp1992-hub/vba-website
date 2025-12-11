@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     ACCOUNT: {
         LOGIN: '/account/login',
         REGISTER: '/account/register',
+        CHECK: '/account/check',  // Thêm dòng này
         LIST: '/account/list',
         DETAIL: '/account',
         UPDATE: '/account',

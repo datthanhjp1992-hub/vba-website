@@ -1,8 +1,7 @@
-//[file name]: panel_left.jsx
-//[file content begin]
 import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
+import DialogAccountRegist from './dialogAccountRegist';
 import { 
     VALIDATION_RULES,
     ERROR_MESSAGES,
@@ -21,6 +20,9 @@ const LeftPanel = () => {
     password: '',
   });
   const [userData, setUserData] = useState(null);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+  // Thêm state mới
+  const [currentView, setCurrentView] = useState('default'); // 'default', 'register'
 
   // Kiểm tra trạng thái đăng nhập khi component mount
   useEffect(() => {
@@ -106,6 +108,28 @@ const LeftPanel = () => {
     }
   };
 
+  // Xử lý mở dialog đăng ký
+  const handleOpenRegisterDialog = (e) => {
+    e.preventDefault();
+    setShowRegisterDialog(true);
+  };
+
+  // Xử lý đóng dialog đăng ký
+  const handleCloseRegisterDialog = () => {
+    setShowRegisterDialog(false);
+  };
+
+  // Xử lý khi đăng ký thành công
+  const handleRegisterSuccess = (userData) => {
+    console.log('Đăng ký thành công:', userData);
+    // Đóng dialog sau 2 giây
+    setTimeout(() => {
+      setShowRegisterDialog(false);
+      // Có thể tự động đăng nhập sau khi đăng ký
+      // hoặc hiển thị thông báo yêu cầu đăng nhập
+    }, 2000);
+  };
+
   // Render form đăng nhập (trạng thái chưa đăng nhập)
   const renderLoginForm = () => (
     <form onSubmit={handleLogin} className="login-form-state fade-in">
@@ -154,9 +178,6 @@ const LeftPanel = () => {
           autoComplete="current-password"
           disabled={isLoading}
         />
-        <small style={{ color: '#666', fontSize: '0.8rem' }}>
-          Phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số
-        </small>
       </div>
       
       <button 
@@ -169,10 +190,20 @@ const LeftPanel = () => {
       
       <div className="login-links">
         <a href="/forgot-password">Quên mật khẩu?</a>
-        <a href="/register">Đăng ký tài khoản</a>
+        <a 
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setCurrentView('register');
+            // Gọi hàm từ parent để thay đổi nội dung panel_center
+            if (window.showRegisterDialog) {
+              window.showRegisterDialog();
+            }
+          }}
+        >
+          Đăng ký tài khoản
+        </a>
       </div>
-      
-      
     </form>
   );
 
@@ -185,7 +216,7 @@ const LeftPanel = () => {
       <div className="logged-in-state fade-in">
         <div className="user-info">
           <p>👋 Chào mừng trở lại!</p>
-          <p>📝 Tài khoản: <strong>{userData?.account}</strong></p>
+          <p>📌 Tài khoản: <strong>{userData?.account}</strong></p>
           <p>👤 Tên hiển thị: <strong>{userData?.username}</strong></p>
           <p>🎯 Quyền hạn: 
             <span style={{
@@ -245,9 +276,16 @@ const LeftPanel = () => {
           )}
         </ul>
       </div>
+
+      {/* Dialog đăng ký */}
+      {showRegisterDialog && (
+        <DialogAccountRegist
+          onClose={handleCloseRegisterDialog}
+          onSuccess={handleRegisterSuccess}
+        />
+      )}
     </aside>
   );
 };
 
 export default LeftPanel;
-//[file content end]
