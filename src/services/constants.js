@@ -7,7 +7,7 @@
 
 // Server configuration
 export const SERVER_CONFIG = {
-    BASE_URL: 'http://localhost:5000',
+    BASE_URL: 'https://my-python-app-pm7j.onrender.com/',
     API_VERSION: 'v1',
     TIMEOUT: 30000, // 30 seconds
 };
@@ -228,6 +228,7 @@ export const validatePassword = (password) => {
         return { valid: false, message: 'Mật khẩu không được để trống' };
     }
     
+    /*
     if (password.length < VALIDATION_RULES.PASSWORD.MIN_LENGTH) {
         return { 
             valid: false, 
@@ -248,7 +249,7 @@ export const validatePassword = (password) => {
             message: 'Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số' 
         };
     }
-    
+    */
     return { valid: true, message: '' };
 };
 
