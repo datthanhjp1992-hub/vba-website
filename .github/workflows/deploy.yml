@@ -35,6 +35,8 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - run: npm install gh-pages --save-dev
+
       - name: Create .nojekyll file
         run: touch ./dist/.nojekyll
 
