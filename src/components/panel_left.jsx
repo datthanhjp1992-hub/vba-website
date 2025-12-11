@@ -1,8 +1,17 @@
 //[file name]: panel_left.jsx
-
+//[file content begin]
 import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
+import { 
+    VALIDATION_RULES,
+    ERROR_MESSAGES,
+    DEMO_ACCOUNTS,
+    getAuthorityName,
+    getAuthorityColor,
+    validateAccount,
+    validatePassword
+} from '../services/constants';
 
 const LeftPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,6 +51,17 @@ const LeftPanel = () => {
     setIsLoading(true);
 
     try {
+      // Validate trước khi gửi
+      const accountValidation = validateAccount(formData.account);
+      if (!accountValidation.valid) {
+        throw new Error(accountValidation.message);
+      }
+
+      const passwordValidation = validatePassword(formData.password);
+      if (!passwordValidation.valid) {
+        throw new Error(passwordValidation.message);
+      }
+
       // Gọi API đăng nhập
       const result = await AccountService.login(formData.account, formData.password);
       
@@ -60,7 +80,7 @@ const LeftPanel = () => {
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setErrorMessage(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+      setErrorMessage(error.message || ERROR_MESSAGES.LOGIN_FAILED);
     } finally {
       setIsLoading(false);
     }
@@ -113,10 +133,13 @@ const LeftPanel = () => {
           value={formData.account}
           onChange={handleInputChange}
           required
-          placeholder="Nhập tài khoản"
+          placeholder={`Nhập tài khoản (${VALIDATION_RULES.ACCOUNT.MIN_LENGTH}-${VALIDATION_RULES.ACCOUNT.MAX_LENGTH} ký tự)`}
           autoComplete="username"
           disabled={isLoading}
         />
+        <small style={{ color: '#666', fontSize: '0.8rem' }}>
+          Chỉ được dùng chữ cái, số và dấu gạch dưới
+        </small>
       </div>
       
       <div className="form-group">
@@ -128,16 +151,19 @@ const LeftPanel = () => {
           value={formData.password}
           onChange={handleInputChange}
           required
-          placeholder="Nhập mật khẩu"
+          placeholder={`Nhập mật khẩu (ít nhất ${VALIDATION_RULES.PASSWORD.MIN_LENGTH} ký tự)`}
           autoComplete="current-password"
           disabled={isLoading}
         />
+        <small style={{ color: '#666', fontSize: '0.8rem' }}>
+          Phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số
+        </small>
       </div>
       
       <button 
         type="submit" 
         className="login-btn"
-        disabled={isLoading}
+        disabled={isLoading || !formData.account || !formData.password}
       >
         {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
       </button>
@@ -158,50 +184,66 @@ const LeftPanel = () => {
       }}>
         <strong>Demo accounts:</strong>
         <div style={{ marginTop: '0.25rem' }}>
-          <div>admin / admin123</div>
-          <div>user1 / user123</div>
-          <div>moderator / mod123</div>
+          {DEMO_ACCOUNTS.map((acc, index) => (
+            <div key={index} style={{ marginBottom: '0.25rem' }}>
+              <span style={{ fontWeight: 'bold' }}>{acc.account}</span> / {acc.password}
+              <span style={{ 
+                marginLeft: '0.5rem',
+                color: getAuthorityColor(acc.authorities),
+                fontSize: '0.75rem'
+              }}>
+                ({getAuthorityName(acc.authorities)})
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </form>
   );
 
   // Render thông tin đã đăng nhập (trạng thái đã đăng nhập)
-  const renderLoggedInState = () => (
-    <div className="logged-in-state fade-in">
-      <div className="user-info">
-        <p>Chào mừng trở lại!</p>
-        <p>Tài khoản: <strong>{userData?.account}</strong></p>
-        <p>Tên hiển thị: <strong>{userData?.username}</strong></p>
-        <p>Quyền hạn: 
-          <span style={{
-            color: userData?.authorities === 1 ? '#28a745' : 
-                   userData?.authorities === 2 ? '#ffc107' : '#007bff',
-            marginLeft: '0.5rem'
-          }}>
-            {userData?.authorities === 1 ? 'Admin' : 
-             userData?.authorities === 2 ? 'Moderator' : 'User'}
-          </span>
-        </p>
-        <p style={{ fontSize: '0.9rem', color: '#666' }}>
-          Đăng nhập lúc: {new Date().toLocaleTimeString()}
-        </p>
+  const renderLoggedInState = () => {
+    const authorityName = getAuthorityName(userData?.authorities);
+    const authorityColor = getAuthorityColor(userData?.authorities);
+    
+    return (
+      <div className="logged-in-state fade-in">
+        <div className="user-info">
+          <p>👋 Chào mừng trở lại!</p>
+          <p>📝 Tài khoản: <strong>{userData?.account}</strong></p>
+          <p>👤 Tên hiển thị: <strong>{userData?.username}</strong></p>
+          <p>🎯 Quyền hạn: 
+            <span style={{
+              color: authorityColor,
+              marginLeft: '0.5rem',
+              fontWeight: 'bold'
+            }}>
+              {authorityName}
+            </span>
+          </p>
+          {userData?.birthday && (
+            <p>🎂 Ngày sinh: {new Date(userData.birthday).toLocaleDateString('vi-VN')}</p>
+          )}
+          <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
+            ⏰ Đăng nhập lúc: {new Date().toLocaleTimeString('vi-VN')}
+          </p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="logout-btn"
+          disabled={isLoading}
+          aria-label="Đăng xuất khỏi tài khoản"
+        >
+          {isLoading ? 'Đang xử lý...' : '🚪 Đăng xuất'}
+        </button>
       </div>
-      <button 
-        onClick={handleLogout}
-        className="logout-btn"
-        disabled={isLoading}
-        aria-label="Đăng xuất khỏi tài khoản"
-      >
-        {isLoading ? 'Đang xử lý...' : 'Đăng xuất'}
-      </button>
-    </div>
-  );
+    );
+  };
 
   return (
     <aside className="left-panel">
       <div className="login-container">
-        <h3>{isLoggedIn ? 'Tài khoản của bạn' : 'Đăng nhập'}</h3>
+        <h3>{isLoggedIn ? '👤 Tài khoản của bạn' : '🔐 Đăng nhập'}</h3>
         
         {/* Hiển thị trạng thái tương ứng */}
         {isLoggedIn ? renderLoggedInState() : renderLoginForm()}
@@ -209,7 +251,7 @@ const LeftPanel = () => {
       
       {/* Menu điều hướng */}
       <div className="left-menu">
-        <h4>Menu điều hướng</h4>
+        <h4>📋 Menu điều hướng</h4>
         <ul>
           <li><a href="/">🏠 Trang chủ</a></li>
           <li><a href="/profile">👤 Hồ sơ cá nhân</a></li>
@@ -218,8 +260,11 @@ const LeftPanel = () => {
             <>
               <li><a href="/messages">✉️ Tin nhắn</a></li>
               <li><a href="/notifications">🔔 Thông báo</a></li>
-              {userData?.authorities > 0 && (
-                <li><a href="/admin">👑 Quản trị</a></li>
+              {AccountService.isAdmin() && (
+                <li><a href="/admin">👑 Quản trị hệ thống</a></li>
+              )}
+              {AccountService.isModerator() && !AccountService.isAdmin() && (
+                <li><a href="/moderator">🛡️ Quản lý nội dung</a></li>
               )}
             </>
           )}
@@ -230,3 +275,4 @@ const LeftPanel = () => {
 };
 
 export default LeftPanel;
+//[file content end]
