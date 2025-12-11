@@ -6,7 +6,6 @@ import AccountService from '../services/account_service';
 import { 
     VALIDATION_RULES,
     ERROR_MESSAGES,
-    DEMO_ACCOUNTS,
     getAuthorityName,
     getAuthorityColor,
     validateAccount,
@@ -173,31 +172,7 @@ const LeftPanel = () => {
         <a href="/register">Đăng ký tài khoản</a>
       </div>
       
-      {/* Demo accounts */}
-      <div style={{
-        marginTop: '1rem',
-        padding: '0.75rem',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '4px',
-        fontSize: '0.8rem',
-        color: '#666'
-      }}>
-        <strong>Demo accounts:</strong>
-        <div style={{ marginTop: '0.25rem' }}>
-          {DEMO_ACCOUNTS.map((acc, index) => (
-            <div key={index} style={{ marginBottom: '0.25rem' }}>
-              <span style={{ fontWeight: 'bold' }}>{acc.account}</span> / {acc.password}
-              <span style={{ 
-                marginLeft: '0.5rem',
-                color: getAuthorityColor(acc.authorities),
-                fontSize: '0.75rem'
-              }}>
-                ({getAuthorityName(acc.authorities)})
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      
     </form>
   );
 

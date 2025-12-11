@@ -128,13 +128,6 @@ export const PAGINATION = {
     PAGE_SIZES: [5, 10, 20, 50],
 };
 
-// Demo accounts for testing
-export const DEMO_ACCOUNTS = [
-    { account: 'admin', password: 'admin123', username: 'Administrator', authorities: 1 },
-    { account: 'user1', password: 'user123', username: 'Người dùng 1', authorities: 0 },
-    { account: 'moderator', password: 'mod123', username: 'Người kiểm duyệt', authorities: 2 },
-];
-
 // UI constants
 export const UI_CONSTANTS = {
     DEBOUNCE_DELAY: 300, // ms
@@ -267,7 +260,6 @@ export default {
     VALIDATION_RULES,
     DATE_FORMATS,
     PAGINATION,
-    DEMO_ACCOUNTS,
     UI_CONSTANTS,
     getApiUrl,
     getAuthorityName,
