@@ -52,33 +52,24 @@ const LeftPanel = () => {
     setIsLoading(true);
 
     try {
-      // Validate trước khi gửi
-      const accountValidation = validateAccount(formData.account);
-      if (!accountValidation.valid) {
-        throw new Error(accountValidation.message);
-      }
+    // ... existing validation code ...
 
-      const passwordValidation = validatePassword(formData.password);
-      if (!passwordValidation.valid) {
-        throw new Error(passwordValidation.message);
-      }
-
-      // Gọi API đăng nhập
-      const result = await AccountService.login(formData.account, formData.password);
+    const result = await AccountService.login(formData.account, formData.password);
+    
+    if (result.success) {
+      AccountService.saveLoginData(result.data);
       
-      if (result.success) {
-        // Lưu thông tin đăng nhập
-        AccountService.saveLoginData(result.data);
-        
-        // Cập nhật state
-        setIsLoggedIn(true);
-        setUserData(result.data);
-        
-        // Reset form
-        setFormData({ account: '', password: '' });
-        
-        console.log('Đăng nhập thành công:', result.data);
+      setIsLoggedIn(true);
+      setUserData(result.data);
+      setFormData({ account: '', password: '' });
+      
+      console.log('Đăng nhập thành công:', result.data);
+      
+      // THÊM DÒNG NÀY: Gọi hiển thị chi tiết tài khoản
+      if (window.showAccountDetails && result.data.id) {
+        window.showAccountDetails(result.data.id);
       }
+    }
     } catch (error) {
       console.error('Login failed:', error);
       setErrorMessage(error.message || ERROR_MESSAGES.LOGIN_FAILED);
