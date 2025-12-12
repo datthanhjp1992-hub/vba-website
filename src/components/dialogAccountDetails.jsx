@@ -49,13 +49,36 @@ const DialogAccountDetails = ({ userId, onBack }) => {
     );
   }
 
+  // Hàm tính tuổi dựa vào năm sinh
+  const calculateAge = (birthday) =>{
+    if(!birthday) return 'Chưa cập nhật';
+    try{
+      const birthDate = new Date(birthday);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      // Điều chỉnh nếu chưa đến sinh nhật trong năm nay
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+    
+    return `${age} tuổi`;
+    }catch (error) {
+      console.error('Error calculating age:', error);
+      return 'Không xác định';
+    } 
+  }
+
+  
+
   return (
     <div className="dialog-account-details">
       <div className="details-header">
         <h2>👤 Thông tin chi tiết tài khoản</h2>
-        <button className="back-btn" onClick={onBack}>
-          ← Quay lại
-        </button>
+        
       </div>
 
       <div className="user-details-card">
@@ -67,7 +90,14 @@ const DialogAccountDetails = ({ userId, onBack }) => {
           <span className="label">Tên hiển thị:</span>
           <span className="value">{userData.username}</span>
         </div>
-        
+        <div className='detail-row'>
+          <span className='label'>Tuổi:</span>
+          <span className='value'>
+            {userData.birthday 
+              ? `${calculateAge(userData.birthday)}`
+              : 'Chưa cập nhật'}
+          </span>
+        </div>
       </div>
 
       <div className="action-buttons">

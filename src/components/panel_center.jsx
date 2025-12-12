@@ -20,9 +20,16 @@ const CenterPanel = () => {
       setViewData({ userId });
     };
     
+    // Thêm hàm để reset về default view từ các component khác
+    window.resetToDefaultView = () => {
+      setCurrentView('default');
+      setViewData({});
+    };
+    
     return () => {
       delete window.showRegisterDialog;
       delete window.showAccountDetails;
+      delete window.resetToDefaultView;
     };
   }, []);
 

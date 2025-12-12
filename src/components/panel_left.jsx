@@ -52,8 +52,7 @@ const LeftPanel = () => {
     setIsLoading(true);
 
     try {
-    // ... existing validation code ...
-
+    // Gửi thông tin người dùng lên trên server để đăng nhập
     const result = await AccountService.login(formData.account, formData.password);
     
     if (result.success) {
@@ -79,13 +78,18 @@ const LeftPanel = () => {
   };
 
   // Xử lý đăng xuất
-  const handleLogout = () => {
-    AccountService.clearLoginData();
-    setIsLoggedIn(false);
-    setUserData(null);
-    setErrorMessage('');
-    console.log('Đã đăng xuất');
-  };
+const handleLogout = () => {
+  AccountService.clearLoginData();
+  setIsLoggedIn(false);
+  setUserData(null);
+  setErrorMessage('');
+  console.log('Đã đăng xuất');
+  
+  // Reset panel_center về default view
+  if (window.resetToDefaultView) {
+    window.resetToDefaultView();
+  }
+};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
