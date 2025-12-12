@@ -103,6 +103,21 @@ const handleLogout = () => {
     }
   };
 
+  // Chuyển về trang default
+  const handleBackToHome =() =>{
+    if (window.resetToDefaultView) {
+      window.resetToDefaultView();
+    }
+  }
+
+  // Chuyển về trang Account Details
+  const handleBackToAccountDetails = (e) => {
+    e.preventDefault();
+    if (window.showAccountDetails && userData?.index) {
+      window.showAccountDetails(userData.index);
+    }
+  }
+
   // Xử lý mở dialog đăng ký
   const handleOpenRegisterDialog = (e) => {
     e.preventDefault();
@@ -110,7 +125,8 @@ const handleLogout = () => {
   };
 
   // Xử lý đóng dialog đăng ký
-  const handleCloseRegisterDialog = () => {
+  const handleCloseRegisterDialog = (e) => {
+    e.preventDefault();
     setShowRegisterDialog(false);
   };
 
@@ -255,8 +271,8 @@ const handleLogout = () => {
         <div className="left-menu">
           <h4>📋 Menu điều hướng</h4>
           <ul>
-            <li><a href="/">🏠 Trang chủ</a></li>
-            <li><a href="/profile">👤 Hồ sơ cá nhân</a></li>
+            <li><a href="#" onClick={handleBackToHome}>🏠 Trang chủ</a></li>
+            <li><a href="#" onClick={handleBackToAccountDetails}>👤 Hồ sơ cá nhân</a></li>
             <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
             <li><a href="/messages">✉️ Tin nhắn</a></li>
             <li><a href="/notifications">🔔 Thông báo</a></li>
