@@ -250,28 +250,30 @@ const handleLogout = () => {
         {isLoggedIn ? renderLoggedInState() : renderLoginForm()}
       </div>
       
-      {/* Menu điều hướng */}
-      <div className="left-menu">
-        <h4>📋 Menu điều hướng</h4>
-        <ul>
-          <li><a href="/">🏠 Trang chủ</a></li>
-          <li><a href="/profile">👤 Hồ sơ cá nhân</a></li>
-          <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
-          {isLoggedIn && (
-            <>
-              <li><a href="/messages">✉️ Tin nhắn</a></li>
-              <li><a href="/notifications">🔔 Thông báo</a></li>
-              {AccountService.isAdmin() && (
-                <li><a href="/admin">👑 Quản trị hệ thống</a></li>
-              )}
-              {AccountService.isModerator() && !AccountService.isAdmin() && (
-                <li><a href="/moderator">🛡️ Quản lý nội dung</a></li>
-              )}
-            </>
-          )}
-        </ul>
-      </div>
-
+      {/* Menu điều hướng - CHỈ hiển thị khi đã đăng nhập */}
+      {isLoggedIn && (
+        <div className="left-menu">
+          <h4>📋 Menu điều hướng</h4>
+          <ul>
+            <li><a href="/">🏠 Trang chủ</a></li>
+            <li><a href="/profile">👤 Hồ sơ cá nhân</a></li>
+            <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
+            <li><a href="/messages">✉️ Tin nhắn</a></li>
+            <li><a href="/notifications">🔔 Thông báo</a></li>
+            
+            {/* Menu cho Admin */}
+            {AccountService.isAdmin() && (
+              <li><a href="/admin">👑 Quản trị hệ thống</a></li>
+            )}
+            
+            {/* Menu cho Moderator (không phải Admin) */}
+            {AccountService.isModerator() && !AccountService.isAdmin() && (
+              <li><a href="/moderator">🛡️ Quản lý nội dung</a></li>
+            )}
+          </ul>
+        </div>
+      )}
+      
       {/* Dialog đăng ký */}
       {showRegisterDialog && (
         <DialogAccountRegist
