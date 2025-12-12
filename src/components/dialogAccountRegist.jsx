@@ -267,9 +267,6 @@ const DialogAccountRegist = ({ onBack }) => {
   return (
     <div className="dialog-account-regist">
       <div className="regist-header">
-        <button className="back-btn" onClick={handleBack}>
-          ← Quay lại
-        </button>
         <h2>📝 Đăng ký tài khoản mới</h2>
       </div>
 
