@@ -15,11 +15,18 @@ const DialogAccountDetails = ({ userId, onBack }) => {
   const fetchUserDetails = async () => {
     try {
       setIsLoading(true);
-      const data = await AccountService.getAccountDetail(userId);
-      setUserData(data);
+      console.log('Fetching user details for ID:', userId); // DEBUG
+      const result = await AccountService.getAccountDetail(userId);
+      console.log('API Response:', result); // DEBUG
+      
+      if (result.success) {
+        setUserData(result.data);
+      } else {
+        setError(result.message || 'Không thể tải thông tin người dùng');
+      }
     } catch (err) {
-      setError('Không thể tải thông tin người dùng');
       console.error('Error fetching user details:', err);
+      setError('Lỗi kết nối server. Vui lòng thử lại sau.');
     } finally {
       setIsLoading(false);
     }
@@ -60,36 +67,7 @@ const DialogAccountDetails = ({ userId, onBack }) => {
           <span className="label">Tên hiển thị:</span>
           <span className="value">{userData.username}</span>
         </div>
-        <div className="detail-row">
-          <span className="label">Email:</span>
-          <span className="value">{userData.email || 'Chưa cập nhật'}</span>
-        </div>
-        <div className="detail-row">
-          <span className="label">Ngày sinh:</span>
-          <span className="value">
-            {userData.birthday 
-              ? new Date(userData.birthday).toLocaleDateString('vi-VN')
-              : 'Chưa cập nhật'}
-          </span>
-        </div>
-        <div className="detail-row">
-          <span className="label">Ngày tạo tài khoản:</span>
-          <span className="value">
-            {new Date(userData.createdAt).toLocaleDateString('vi-VN')}
-          </span>
-        </div>
-        <div className="detail-row">
-          <span className="label">Quyền hạn:</span>
-          <span className="value authority">
-            {AccountService.getAuthorityName(userData.authorities)}
-          </span>
-        </div>
-        <div className="detail-row">
-          <span className="label">Trạng thái:</span>
-          <span className={`value status ${userData.status}`}>
-            {userData.status === 'active' ? '✅ Hoạt động' : '❌ Bị khóa'}
-          </span>
-        </div>
+        
       </div>
 
       <div className="action-buttons">

@@ -65,9 +65,9 @@ const LeftPanel = () => {
       
       console.log('Đăng nhập thành công:', result.data);
       
-      // THÊM DÒNG NÀY: Gọi hiển thị chi tiết tài khoản
-      if (window.showAccountDetails && result.data.id) {
-        window.showAccountDetails(result.data.id);
+      // Gọi hiển thị chi tiết tài khoản
+      if (window.showAccountDetails && result.data.index) {
+        window.showAccountDetails(result.data.index);
       }
     }
     } catch (error) {

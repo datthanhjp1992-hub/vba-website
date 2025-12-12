@@ -154,7 +154,7 @@ class AccountService {
 
             return {
                 success: data.success,
-                data: data.data
+                data: data.data || data
             };
         } catch (error) {
             if (error.name === 'TimeoutError') {
