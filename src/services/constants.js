@@ -138,6 +138,40 @@ export const UI_CONSTANTS = {
     HEADER_HEIGHT: 60, // px
 };
 
+// constants.js - Thêm vào sau UI_CONSTANTS hoặc trước export default
+
+// Connection test configuration
+export const CONNECTION_TEST = {
+    INTERVAL: 10000, // 10 giây - Thời gian kiểm tra kết nối
+    TIMEOUT: 5000,   // 5 giây timeout cho mỗi lần kiểm tra
+    HEALTH_ENDPOINT: '/health',
+    TEST_ENDPOINT: '/test'
+};
+
+// Connection status
+export const CONNECTION_STATUS = {
+    CONNECTED: 'connected',
+    DISCONNECTED: 'disconnected',
+    CHECKING: 'checking',
+    ERROR: 'error'
+};
+
+// Connection status colors
+export const CONNECTION_STATUS_COLORS = {
+    connected: '#4CAF50',    // Green
+    disconnected: '#f44336', // Red
+    checking: '#FF9800',     // Orange
+    error: '#9C27B0'         // Purple
+};
+
+// Connection status messages
+export const CONNECTION_STATUS_MESSAGES = {
+    connected: 'Kết nối ổn định',
+    disconnected: 'Mất kết nối',
+    checking: 'Đang kiểm tra...',
+    error: 'Lỗi kết nối'
+};
+
 /**
  * Helper functions để lấy các giá trị phức tạp
  */
@@ -262,6 +296,10 @@ export default {
     DATE_FORMATS,
     PAGINATION,
     UI_CONSTANTS,
+    CONNECTION_TEST,
+    CONNECTION_STATUS,
+    CONNECTION_STATUS_COLORS,
+    CONNECTION_STATUS_MESSAGES,
     getApiUrl,
     getAuthorityName,
     getAuthorityColor,
