@@ -144,8 +144,8 @@ export const UI_CONSTANTS = {
 
 // Connection test configuration
 export const CONNECTION_TEST = {
-    INTERVAL: 10000, // 10 giây - Thời gian kiểm tra kết nối
-    TIMEOUT: 5000,   // 5 giây timeout cho mỗi lần kiểm tra
+    INTERVAL: 60000, // 60 giây - Thời gian kiểm tra kết nối
+    TIMEOUT: 10000,   // 10 giây timeout cho mỗi lần kiểm tra
     HEALTH_ENDPOINT: '/health',
     TEST_ENDPOINT: '/test'
 };
