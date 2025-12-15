@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
 import DialogAccountRegist from './dialogAccountRegist';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 import { 
     VALIDATION_RULES,
     ERROR_MESSAGES,
@@ -11,7 +11,6 @@ import {
     validateAccount,
     validatePassword
 } from '../services/constants';
-
 
 const LeftPanel = () => {
   const { 
@@ -22,38 +21,36 @@ const LeftPanel = () => {
     isLoading: authLoading 
   } = useAuth();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     account: '',
     password: '',
   });
-  const [userData, setUserData] = useState(null);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
-  // Thêm state mới
-  const [currentView, setCurrentView] = useState('default'); // 'default', 'register'
+  const [currentView, setCurrentView] = useState('default');
 
-  // Kiểm tra trạng thái đăng nhập khi component mount
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      setIsLoading(true);
-      const authStatus = await AccountService.checkAuthStatus();
-      
-      if (authStatus.isAuthenticated) {
-        setIsLoggedIn(true);
-        setUserData(authStatus.user);
-      }
-    } catch (error) {
-      console.error('Failed to check auth status:', error);
-    } finally {
-      setIsLoading(false);
+  // Chuyển về trang default
+  const handleBackToHome = () => {
+    if (window.resetToDefaultView) {
+      window.resetToDefaultView();
     }
-  };
+  }
+
+  // Chuyển về trang Account Details - SỬA LẠI Ở ĐÂY
+  const handleBackToAccountDetails = (e) => {
+    e.preventDefault();
+    if (window.showAccountDetails && currentUser?.index) {
+      // Sử dụng currentUser từ AuthContext thay vì userData cũ
+      window.showAccountDetails(currentUser.index);
+    } else {
+      console.error('Không thể mở hồ sơ cá nhân:', {
+        hasFunction: !!window.showAccountDetails,
+        currentUser: currentUser,
+        userIndex: currentUser?.index
+      });
+    }
+  }
 
   // Xử lý đăng nhập với API
   const handleLogin = async (e) => {
@@ -70,8 +67,12 @@ const LeftPanel = () => {
         setFormData({ account: '', password: '' });
         console.log('Đăng nhập thành công:', result.data);
         
+        // Mở luôn hồ sơ cá nhân sau khi đăng nhập
         if (window.showAccountDetails && result.data.index) {
-          window.showAccountDetails(result.data.index);
+          // Thêm setTimeout để đảm bảo UI đã cập nhật
+          setTimeout(() => {
+            window.showAccountDetails(result.data.index);
+          }, 100);
         }
       } else {
         setErrorMessage(result.message || ERROR_MESSAGES.LOGIN_FAILED);
@@ -99,26 +100,10 @@ const LeftPanel = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error message khi user bắt đầu nhập
     if (errorMessage) {
       setErrorMessage('');
     }
   };
-
-  // Chuyển về trang default
-  const handleBackToHome =() =>{
-    if (window.resetToDefaultView) {
-      window.resetToDefaultView();
-    }
-  }
-
-  // Chuyển về trang Account Details
-  const handleBackToAccountDetails = (e) => {
-    e.preventDefault();
-    if (window.showAccountDetails && userData?.index) {
-      window.showAccountDetails(userData.index);
-    }
-  }
 
   // Xử lý mở dialog đăng ký
   const handleOpenRegisterDialog = (e) => {
@@ -135,27 +120,16 @@ const LeftPanel = () => {
   // Xử lý khi đăng ký thành công
   const handleRegisterSuccess = (userData) => {
     console.log('Đăng ký thành công:', userData);
-    // Đóng dialog sau 2 giây
     setTimeout(() => {
       setShowRegisterDialog(false);
-      // Có thể tự động đăng nhập sau khi đăng ký
-      // hoặc hiển thị thông báo yêu cầu đăng nhập
     }, 2000);
   };
 
-  // Render form đăng nhập (trạng thái chưa đăng nhập)
+  // Render form đăng nhập
   const renderLoginForm = () => (
     <form onSubmit={handleLogin} className="login-form-state fade-in">
       {errorMessage && (
-        <div className="error-message" style={{
-          backgroundColor: '#fee',
-          color: '#c33',
-          padding: '0.75rem',
-          borderRadius: '4px',
-          marginBottom: '1rem',
-          fontSize: '0.9rem',
-          textAlign: 'center'
-        }}>
+        <div className="error-message">
           ⚠️ {errorMessage}
         </div>
       )}
@@ -173,9 +147,7 @@ const LeftPanel = () => {
           autoComplete="username"
           disabled={isLoading}
         />
-        <small style={{ color: '#666', fontSize: '0.8rem' }}>
-          Chỉ được dùng chữ cái, số và dấu gạch dưới
-        </small>
+        <small>Chỉ được dùng chữ cái, số và dấu gạch dưới</small>
       </div>
       
       <div className="form-group">
@@ -207,8 +179,6 @@ const LeftPanel = () => {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            setCurrentView('register');
-            // Gọi hàm từ parent để thay đổi nội dung panel_center
             if (window.showRegisterDialog) {
               window.showRegisterDialog();
             }
@@ -219,7 +189,6 @@ const LeftPanel = () => {
       </div>
     </form>
   );
-
 
   // Render thông tin đã đăng nhập
   const renderLoggedInState = () => {
@@ -232,20 +201,7 @@ const LeftPanel = () => {
           <p>👋 Chào mừng trở lại!</p>
           <p>📌 Tài khoản: <strong>{currentUser?.account}</strong></p>
           <p>👤 Tên hiển thị: <strong>{currentUser?.username}</strong></p>
-          {/*
-          <p>🎯 Quyền hạn: 
-            <span style={{
-              color: authorityColor,
-              marginLeft: '0.5rem',
-              fontWeight: 'bold'
-            }}>
-              {authorityName}
-            </span>
-          </p>
-          {currentUser?.birthday && (
-            <p>🎂 Ngày sinh: {new Date(currentUser.birthday).toLocaleDateString('vi-VN')}</p>
-          )}
-          */}
+          {/* Hiển thị thông tin khác nếu cần */}
         </div>
         <button 
           onClick={handleLogout}
@@ -266,28 +222,33 @@ const LeftPanel = () => {
         {isAuthenticated ? renderLoggedInState() : renderLoginForm()}
       </div>
       
-      {/* Menu điều hướng - CHỈ hiển thị khi đã đăng nhập */}
+      {/* Menu điều hướng */}
       {isAuthenticated && (
         <div className="left-menu">
           <h4>📋 Menu điều hướng</h4>
           <ul>
             <li><a href="#" onClick={handleBackToHome}>🏠 Trang chủ</a></li>
-            <li><a href="#" onClick={handleBackToAccountDetails}>👤 Hồ sơ cá nhân</a></li>
-
+            <li>
+              <a href="#" onClick={handleBackToAccountDetails}>
+                👤 Hồ sơ cá nhân
+                {currentUser?.index && (
+                  <span style={{fontSize: '0.8em', marginLeft: '5px', color: '#666'}}>
+                    (ID: {currentUser.index})
+                  </span>
+                )}
+              </a>
+            </li>
             <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
             <li><a href="/messages">✉️ Tin nhắn</a></li>
             <li><a href="/notifications">🔔 Thông báo</a></li>
             
-            {/* Menu cho Admin */}
             {AccountService.isAdmin() && (
               <li><a href="/admin">👑 Quản trị hệ thống</a></li>
             )}
             
-            {/* Menu cho Moderator (không phải Admin) */}
             {AccountService.isModerator() && !AccountService.isAdmin() && (
               <li><a href="/moderator">🛡️ Quản lý nội dung</a></li>
             )}
-
           </ul>
         </div>
       )}
@@ -302,6 +263,5 @@ const LeftPanel = () => {
     </aside>
   );
 };
-
 
 export default LeftPanel;

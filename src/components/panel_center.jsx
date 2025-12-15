@@ -6,54 +6,77 @@ import DialogAccountDetails from './dialogAccountDetails';
 
 const CenterPanel = () => {
   const [currentView, setCurrentView] = useState('default');
-  const [viewData, setViewData] = useState({});
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showAccountDetails, setShowAccountDetails] = useState(false);
 
-  // Expose functions for other components to call
+  // Thiết lập các hàm global
   useEffect(() => {
-    window.showRegisterDialog = () => {
-      setCurrentView('register');
-      setViewData({});
-    };
-    
+    // Hàm để hiển thị chi tiết tài khoản
     window.showAccountDetails = (userId) => {
-      setCurrentView('accountDetails');
-      setViewData({ userId });
+      console.log('Opening account details for user ID:', userId);
+      setSelectedUserId(userId);
+      setShowAccountDetails(true);
+      setCurrentView('account-details');
     };
-    
-    // Thêm hàm để reset về default view từ các component khác
+
+    // Hàm để hiển thị đăng ký
+    window.showRegisterDialog = () => {
+      console.log('Opening register dialog');
+      setCurrentView('register');
+    };
+
+    // Hàm reset về default
     window.resetToDefaultView = () => {
+      console.log('Resetting to default view');
       setCurrentView('default');
-      setViewData({});
+      setShowAccountDetails(false);
+      setSelectedUserId(null);
     };
-    
+
+    // Cleanup khi component unmount
     return () => {
-      delete window.showRegisterDialog;
       delete window.showAccountDetails;
+      delete window.showRegisterDialog;
       delete window.resetToDefaultView;
     };
   }, []);
 
-  const handleBack = () => {
+  // Hàm xử lý khi xóa tài khoản thành công
+  const handleDeleteSuccess = (deletedUserId) => {
+    console.log(`Account ${deletedUserId} deleted successfully`);
+    setShowAccountDetails(false);
+    setSelectedUserId(null);
     setCurrentView('default');
-    setViewData({});
   };
 
+  // Render nội dung theo currentView
   const renderContent = () => {
     switch (currentView) {
-      case 'register':
-        return <DialogAccountRegist onBack={handleBack} />;
+      case 'account-details':
+        return (
+          <DialogAccountDetails
+            userId={selectedUserId}
+            onBack={() => {
+              setShowAccountDetails(false);
+              setCurrentView('default');
+            }}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        );
       
-      case 'accountDetails':
-        return <DialogAccountDetails 
-          userId={viewData.userId} 
-          onBack={handleBack} 
-        />;
+      case 'register':
+        return (
+          <DialogAccountRegist
+            onBack={() => setCurrentView('default')}
+          />
+        );
       
       default:
         return (
           <div className="default-content">
-            <h1>Chào mừng đến với ứng dụng</h1>
-            <p>Vui lòng đăng nhập hoặc đăng ký tài khoản để bắt đầu.</p>
+            <h2>Welcome to the Application</h2>
+            <p>This is the default view.</p>
+            {/* Thêm nội dung mặc định của bạn ở đây */}
           </div>
         );
     }
