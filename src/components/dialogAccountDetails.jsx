@@ -82,14 +82,17 @@ const DialogAccountDetails = ({ userId, onBack }) => {
       </div>
 
       <div className="user-details-card">
+        {/* Tên tài khoản */} 
         <div className="detail-row">
           <span className="label">Tài khoản:</span>
           <span className="value">{userData.account}</span>
         </div>
+        {/* Tên hiển thị */}
         <div className="detail-row">
           <span className="label">Tên hiển thị:</span>
           <span className="value">{userData.username}</span>
         </div>
+        {/* Tuổi */}
         <div className='detail-row'>
           <span className='label'>Tuổi:</span>
           <span className='value'>
@@ -98,6 +101,17 @@ const DialogAccountDetails = ({ userId, onBack }) => {
               : 'Chưa cập nhật'}
           </span>
         </div>
+        {/* Email */}
+        <div className="detail-row">
+          <span className="label">Email:</span>
+          <span className="value">{userData.email}</span>
+        </div>
+        {/* Số điện thoại */}
+        <div className="detail-row">
+          <span className="label">TEL:</span>
+          <span className="value">{userData.tel}</span>
+        </div>
+
       </div>
 
       <div className="action-buttons">
