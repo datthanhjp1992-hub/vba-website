@@ -85,6 +85,8 @@ export const ERROR_MESSAGES = {
     NOT_FOUND: 'Không tìm thấy dữ liệu.',
     VALIDATION_ERROR: 'Dữ liệu không hợp lệ.',
     LOGIN_FAILED: 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
+    EMAIL_REQUIRED: 'Email không được để trống',
+    EMAIL_INVALID: 'Email không đúng định dạng',
 };
 
 // Success messages
@@ -280,6 +282,31 @@ export const validatePassword = (password) => {
     */
     return { valid: true, message: '' };
 };
+
+//  Kiểm tra email hợp lệ
+export const validateEmail = (email) => {
+    if (!email || email.trim() === '') {
+      return {
+        valid: false,
+        message: 'Email không được để trống'
+      };
+    }
+    
+    // Regex kiểm tra định dạng email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+      return {
+        valid: false,
+        message: 'Email không đúng định dạng (ví dụ: example@domain.com)'
+      };
+    }
+    
+    return {
+      valid: true,
+      message: 'Email hợp lệ'
+    };
+  };
 
 // Export tất cả dưới dạng object để import dễ dàng
 export default {

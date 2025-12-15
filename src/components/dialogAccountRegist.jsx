@@ -4,6 +4,7 @@ import AccountService from '../services/account_service';
 import { 
     validateAccount, 
     validatePassword, 
+    validateEmail,
     ERROR_MESSAGES, 
     SUCCESS_MESSAGES,
     getApiUrl 
@@ -16,6 +17,8 @@ const DialogAccountRegist = ({ onBack }) => {
     confirmPassword: '',
     username: '',
     birthday: '',
+    email:'',
+    tel:'',
   });
 
   const [errors, setErrors] = useState({});
@@ -175,6 +178,13 @@ const DialogAccountRegist = ({ onBack }) => {
       if (birthDate < minDate) {
         newErrors.birthday = 'Ngày sinh không hợp lệ';
       }
+
+      // Validate email (bắt buộc)
+      const emailValidation = validateEmail(formData.email);
+      if (!emailValidation.valid) {
+        newErrors.email = emailValidation.message;
+      }
+
     }
 
     setErrors(newErrors);
@@ -197,6 +207,8 @@ const DialogAccountRegist = ({ onBack }) => {
         password: formData.password,
         username: formData.username,
         birthday: formData.birthday || null,
+        email : formData.email, 
+        tel : formData.tel || null,
       };
 
       const result = await AccountService.register(userData);
@@ -215,6 +227,8 @@ const DialogAccountRegist = ({ onBack }) => {
             confirmPassword: '',
             username: '',
             birthday: '',
+            email: '',
+            tel: '',
           });
           setIsAccountAvailable(null);
           setLastCheckedAccount('');
@@ -396,6 +410,46 @@ const DialogAccountRegist = ({ onBack }) => {
           />
           {errors.birthday && <span className="error-text">{errors.birthday}</span>}
           <small className="hint">Không bắt buộc. Nhấn để chọn ngày từ lịch</small>
+        </div>
+
+        {/* Email Field */}
+        <div className="form-group">
+          <label htmlFor="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="example@domain.com"
+            disabled={isSubmitting}
+            className={errors.email ? 'error' : ''}
+            autoComplete="email"
+          />
+          {errors.email && <span className="error-text">{errors.email}</span>} {/* ← Sửa từ errors.username sang errors.email */}
+          <small className="hint">
+            Email có thể sử dụng trong trường hợp lấy lại mật khẩu
+          </small>
+        </div>
+
+
+          {/* Phone Number Field */}
+          <div className="form-group">
+          <label htmlFor="tel">Telephone Number</label>
+          <input
+            type="tel"
+            id="tel"
+            name="tel"
+            value={formData.tel}
+            onChange={handleInputChange}
+            placeholder="0123456789"
+            disabled={isSubmitting}
+            className={errors.tel ? 'error' : ''}
+          />
+          {errors.tel && <span className="error-text">{errors.tel}</span>}
+          <small className="hint">
+            Số điện thoại (không bắt buộc)
+          </small>
         </div>
 
         <div className="form-actions">
