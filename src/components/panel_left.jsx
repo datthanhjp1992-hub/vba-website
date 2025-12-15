@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
 import DialogAccountRegist from './dialogAccountRegist';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import { 
     VALIDATION_RULES,
     ERROR_MESSAGES,
@@ -11,7 +12,16 @@ import {
     validatePassword
 } from '../services/constants';
 
+
 const LeftPanel = () => {
+  const { 
+    isAuthenticated, 
+    currentUser, 
+    login, 
+    logout, 
+    isLoading: authLoading 
+  } = useAuth();
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -52,23 +62,20 @@ const LeftPanel = () => {
     setIsLoading(true);
 
     try {
-    // Gửi thông tin người dùng lên trên server để đăng nhập
-    const result = await AccountService.login(formData.account, formData.password);
-    
-    if (result.success) {
-      AccountService.saveLoginData(result.data);
+      const result = await AccountService.login(formData.account, formData.password);
       
-      setIsLoggedIn(true);
-      setUserData(result.data);
-      setFormData({ account: '', password: '' });
-      
-      console.log('Đăng nhập thành công:', result.data);
-      
-      // Gọi hiển thị chi tiết tài khoản
-      if (window.showAccountDetails && result.data.index) {
-        window.showAccountDetails(result.data.index);
+      if (result.success) {
+        login(result.data); // Sử dụng context login
+        
+        setFormData({ account: '', password: '' });
+        console.log('Đăng nhập thành công:', result.data);
+        
+        if (window.showAccountDetails && result.data.index) {
+          window.showAccountDetails(result.data.index);
+        }
+      } else {
+        setErrorMessage(result.message || ERROR_MESSAGES.LOGIN_FAILED);
       }
-    }
     } catch (error) {
       console.error('Login failed:', error);
       setErrorMessage(error.message || ERROR_MESSAGES.LOGIN_FAILED);
@@ -78,18 +85,13 @@ const LeftPanel = () => {
   };
 
   // Xử lý đăng xuất
-const handleLogout = () => {
-  AccountService.clearLoginData();
-  setIsLoggedIn(false);
-  setUserData(null);
-  setErrorMessage('');
-  console.log('Đã đăng xuất');
-  
-  // Reset panel_center về default view
-  if (window.resetToDefaultView) {
-    window.resetToDefaultView();
-  }
-};
+  const handleLogout = () => {
+    logout(); // Sử dụng context logout
+    
+    if (window.resetToDefaultView) {
+      window.resetToDefaultView();
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -218,17 +220,19 @@ const handleLogout = () => {
     </form>
   );
 
-  // Render thông tin đã đăng nhập (trạng thái đã đăng nhập)
+
+  // Render thông tin đã đăng nhập
   const renderLoggedInState = () => {
-    const authorityName = getAuthorityName(userData?.authorities);
-    const authorityColor = getAuthorityColor(userData?.authorities);
+    const authorityName = getAuthorityName(currentUser?.authorities);
+    const authorityColor = getAuthorityColor(currentUser?.authorities);
     
     return (
       <div className="logged-in-state fade-in">
         <div className="user-info">
           <p>👋 Chào mừng trở lại!</p>
-          <p>📌 Tài khoản: <strong>{userData?.account}</strong></p>
-          <p>👤 Tên hiển thị: <strong>{userData?.username}</strong></p>
+          <p>📌 Tài khoản: <strong>{currentUser?.account}</strong></p>
+          <p>👤 Tên hiển thị: <strong>{currentUser?.username}</strong></p>
+          {/*
           <p>🎯 Quyền hạn: 
             <span style={{
               color: authorityColor,
@@ -238,18 +242,15 @@ const handleLogout = () => {
               {authorityName}
             </span>
           </p>
-          {userData?.birthday && (
-            <p>🎂 Ngày sinh: {new Date(userData.birthday).toLocaleDateString('vi-VN')}</p>
+          {currentUser?.birthday && (
+            <p>🎂 Ngày sinh: {new Date(currentUser.birthday).toLocaleDateString('vi-VN')}</p>
           )}
-          <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
-            ⏰ Đăng nhập lúc: {new Date().toLocaleTimeString('vi-VN')}
-          </p>
+          */}
         </div>
         <button 
           onClick={handleLogout}
           className="logout-btn"
           disabled={isLoading}
-          aria-label="Đăng xuất khỏi tài khoản"
         >
           {isLoading ? 'Đang xử lý...' : '🚪 Đăng xuất'}
         </button>
@@ -260,19 +261,19 @@ const handleLogout = () => {
   return (
     <aside className="left-panel">
       <div className="login-container">
-        <h3>{isLoggedIn ? '👤 Tài khoản của bạn' : '🔐 Đăng nhập'}</h3>
+        <h3>{isAuthenticated ? '👤 Tài khoản của bạn' : '🔐 Đăng nhập'}</h3>
         
-        {/* Hiển thị trạng thái tương ứng */}
-        {isLoggedIn ? renderLoggedInState() : renderLoginForm()}
+        {isAuthenticated ? renderLoggedInState() : renderLoginForm()}
       </div>
       
       {/* Menu điều hướng - CHỈ hiển thị khi đã đăng nhập */}
-      {isLoggedIn && (
+      {isAuthenticated && (
         <div className="left-menu">
           <h4>📋 Menu điều hướng</h4>
           <ul>
             <li><a href="#" onClick={handleBackToHome}>🏠 Trang chủ</a></li>
             <li><a href="#" onClick={handleBackToAccountDetails}>👤 Hồ sơ cá nhân</a></li>
+
             <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
             <li><a href="/messages">✉️ Tin nhắn</a></li>
             <li><a href="/notifications">🔔 Thông báo</a></li>
@@ -286,6 +287,7 @@ const handleLogout = () => {
             {AccountService.isModerator() && !AccountService.isAdmin() && (
               <li><a href="/moderator">🛡️ Quản lý nội dung</a></li>
             )}
+
           </ul>
         </div>
       )}
@@ -300,5 +302,6 @@ const handleLogout = () => {
     </aside>
   );
 };
+
 
 export default LeftPanel;

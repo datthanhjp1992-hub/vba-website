@@ -22,7 +22,7 @@ export const API_ENDPOINTS = {
         LIST: '/account/list',
         DETAIL: '/account',
         UPDATE: '/account',
-        DELETE: '/account',
+        DELETE: '/account/delete',
     },
     
     // Database endpoints

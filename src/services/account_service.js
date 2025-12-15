@@ -1,5 +1,5 @@
 //[file name]: account_service.js
-//[file content begin]
+
 /**
  * Service để xử lý các API liên quan đến tài khoản
  */
@@ -352,7 +352,7 @@ class AccountService {
      * @param {string} account - Tên đăng nhập cần kiểm tra
      * @returns {Promise} Promise với kết quả kiểm tra
      */
-        static async checkAccount(account) {
+    static async checkAccount(account) {
             try {
                 // Validate input
                 const accountValidation = validateAccount(account);
@@ -396,7 +396,42 @@ class AccountService {
                 throw error;
             }
         }
+    
+    /**
+     * Xóa tài khoản
+     * @param {number} index - ID tài khoản cần xóa
+     * @returns {Promise} Promise với kết quả xóa
+     */
+    static async deleteAccount(index) {
+        try {
+        const url = getApiUrl(`${API_ENDPOINTS.ACCOUNT.DELETE}/${index}`);
+    
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+            'Accept': 'application/json'
+            },
+            signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+        });
+    
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Không thể xóa tài khoản');
+        }
+    
+        return {
+            success: data.success,
+            message: data.message || 'Đã xóa tài khoản thành công'
+        };
+        } catch (error) {
+        if (error.name === 'TimeoutError') {
+            throw new Error('Request timeout. Vui lòng thử lại sau.');
+        }
+        console.error('Delete account error:', error);
+        throw error;
+        }
+    }
 }
 
 export default AccountService;
-//[file content end]
