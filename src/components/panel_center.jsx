@@ -1,6 +1,10 @@
 //[FileName]: panel_center.jsx
 //[Version]: 1.0
 //[Content]: Đây là components chính phụ trách việc hiển thị thông tin của các components con
+/**
+ * v1.0: Default
+ * v1.1: Bấm nút quay lại trên dialogAccountChange thì sẽ trở về dialogAccountDetails
+ */
 
 import React, { useState, useEffect } from 'react';
 import '../css/panel_center.css';
@@ -113,7 +117,7 @@ const CenterPanel = () => {
             userId={selectedUserId}
             onBack={() => {
               setShowAccountChange(false);
-              setCurrentView('default');
+              setCurrentView('account-details');
             }}
             onChangeSuccess={handleAccountChangeSuccess}
           />
