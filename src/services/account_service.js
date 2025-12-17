@@ -14,6 +14,7 @@ import {
     getErrorMessage,
     validateAccount,
     validatePassword,
+    validateEmail,
     isAdmin,
     isModerator
 } from './constants';
@@ -57,6 +58,11 @@ class AccountService {
                 throw new Error(data.error || ERROR_MESSAGES.LOGIN_FAILED);
             }
 
+            // Lưu thông tin đăng nhập
+            if (data.success && data.data) {
+                this.saveLoginData(data.data);
+            }
+
             return {
                 success: data.success,
                 data: data.data,
@@ -79,7 +85,7 @@ class AccountService {
     static async register(userData) {
         try {
             // Validate required data
-            const requiredFields = ['account', 'password', 'username'];
+            const requiredFields = ['account', 'password', 'username', 'email'];
             for (const field of requiredFields) {
                 if (!userData[field]) {
                     throw new Error(`Thiếu trường bắt buộc: ${field}`);
@@ -95,6 +101,11 @@ class AccountService {
             const passwordValidation = validatePassword(userData.password);
             if (!passwordValidation.valid) {
                 throw new Error(passwordValidation.message);
+            }
+
+            const emailValidation = validateEmail(userData.email);
+            if (!emailValidation.valid) {
+                throw new Error(emailValidation.message);
             }
 
             const url = getApiUrl(API_ENDPOINTS.ACCOUNT.REGISTER);
@@ -118,7 +129,9 @@ class AccountService {
             return {
                 success: data.success,
                 data: data.data,
-                message: data.message || SUCCESS_MESSAGES.REGISTER_SUCCESS
+                message: data.message || SUCCESS_MESSAGES.REGISTER_SUCCESS,
+                emailSent: data.email_sent || false,
+                emailMessage: data.email_message || ''
             };
         } catch (error) {
             if (error.name === 'TimeoutError') {
@@ -130,7 +143,7 @@ class AccountService {
     }
 
     /**
-     * Lấy thông tin tài khoản
+     * Lấy thông tin chi tiết tài khoản
      * @param {number} index - ID tài khoản
      * @returns {Promise} Promise với thông tin tài khoản
      */
@@ -161,6 +174,53 @@ class AccountService {
                 throw new Error('Request timeout. Vui lòng thử lại sau.');
             }
             console.error('Get account detail error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Cập nhật thông tin tài khoản
+     * @param {number} index - ID tài khoản
+     * @param {Object} userData - Dữ liệu cần cập nhật
+     * @returns {Promise} Promise với kết quả cập nhật
+     */
+    static async updateAccount(index, userData) {
+        try {
+            const url = getApiUrl(`${API_ENDPOINTS.ACCOUNT.DETAIL}/${index}`);
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(userData),
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || ERROR_MESSAGES.UPDATE_ERROR);
+            }
+
+            // Cập nhật localStorage nếu là user hiện tại
+            const currentUser = this.getCurrentUser();
+            if (currentUser && currentUser.index === index) {
+                const updatedUser = { ...currentUser, ...userData };
+                this.saveLoginData(updatedUser);
+            }
+
+            return {
+                success: data.success,
+                data: data.data || data,
+                message: data.message || SUCCESS_MESSAGES.UPDATE_SUCCESS
+            };
+        } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Update account error:', error);
             throw error;
         }
     }
@@ -252,6 +312,8 @@ class AccountService {
             const result = await this.getAccountDetail(user.index);
             
             if (result.success) {
+                // Cập nhật thông tin user mới nhất
+                this.saveLoginData(result.data);
                 return {
                     isAuthenticated: true,
                     user: result.data
@@ -314,6 +376,25 @@ class AccountService {
     }
 
     /**
+     * Cập nhật thông tin user trong localStorage
+     * @param {Object} updatedData - Dữ liệu cập nhật
+     */
+    static updateCurrentUser(updatedData) {
+        try {
+            const currentUser = this.getCurrentUser();
+            if (currentUser) {
+                const updatedUser = { ...currentUser, ...updatedData };
+                this.saveLoginData(updatedUser);
+                return updatedUser;
+            }
+            return null;
+        } catch (error) {
+            console.error('Update current user error:', error);
+            return null;
+        }
+    }
+
+    /**
      * Kiểm tra quyền của user hiện tại
      * @param {number} requiredAuthority - Authority tối thiểu cần có
      * @returns {boolean}
@@ -353,50 +434,107 @@ class AccountService {
      * @returns {Promise} Promise với kết quả kiểm tra
      */
     static async checkAccount(account) {
-            try {
-                // Validate input
-                const accountValidation = validateAccount(account);
-                if (!accountValidation.valid) {
-                    return {
-                        success: false,
-                        exists: true,
-                        message: accountValidation.message
-                    };
-                }
-    
-                const url = getApiUrl(
-                    API_ENDPOINTS.ACCOUNT.CHECK
-                ) + `?account=${encodeURIComponent(account)}`;
-    
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
-                });
-    
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Lỗi khi kiểm tra account');
-                }
-    
+        try {
+            // Validate input
+            const accountValidation = validateAccount(account);
+            if (!accountValidation.valid) {
                 return {
-                    success: data.success,
-                    exists: data.exists || false,
-                    message: data.message || ''
+                    success: false,
+                    exists: true,
+                    message: accountValidation.message
                 };
-            } catch (error) {
-                if (error.name === 'TimeoutError') {
-                    throw new Error('Request timeout. Vui lòng thử lại sau.');
-                }
-                console.error('Check account error:', error);
-                throw error;
             }
+
+            const url = getApiUrl(
+                API_ENDPOINTS.ACCOUNT.CHECK
+            ) + `?account=${encodeURIComponent(account)}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Lỗi khi kiểm tra account');
+            }
+
+            return {
+                success: data.success,
+                exists: data.exists || false,
+                message: data.message || ''
+            };
+        } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Check account error:', error);
+            throw error;
         }
-    
+    }
+
+    /**
+     * Kiểm tra email đã tồn tại chưa (cho update)
+     * @param {string} email - Email cần kiểm tra
+     * @param {number} excludeAccountId - ID tài khoản cần loại trừ (nếu đang update)
+     * @returns {Promise} Promise với kết quả kiểm tra
+     */
+    static async validateEmail(email, excludeAccountId = null) {
+        try {
+            // Validate email format
+            const emailValidation = validateEmail(email);
+            if (!emailValidation.valid) {
+                return {
+                    success: false,
+                    valid: false,
+                    exists: false,
+                    message: emailValidation.message
+                };
+            }
+
+            let url = getApiUrl(
+                API_ENDPOINTS.ACCOUNT.VALIDATE_EMAIL
+            ) + `?email=${encodeURIComponent(email)}`;
+            
+            if (excludeAccountId) {
+                url += `&exclude_account_id=${excludeAccountId}`;
+            }
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Lỗi khi kiểm tra email');
+            }
+
+            return {
+                success: data.success,
+                valid: data.valid || false,
+                exists: data.exists || false,
+                message: data.message || ''
+            };
+        } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Validate email error:', error);
+            throw error;
+        }
+    }
+
     /**
      * Xóa tài khoản
      * @param {number} index - ID tài khoản cần xóa
@@ -404,33 +542,117 @@ class AccountService {
      */
     static async deleteAccount(index) {
         try {
-        const url = getApiUrl(`${API_ENDPOINTS.ACCOUNT.DELETE}/${index}`);
-    
-        const response = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-            'Accept': 'application/json'
-            },
-            signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
-        });
-    
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Không thể xóa tài khoản');
-        }
-    
-        return {
-            success: data.success,
-            message: data.message || 'Đã xóa tài khoản thành công'
-        };
+            const url = getApiUrl(`${API_ENDPOINTS.ACCOUNT.DELETE}/${index}`);
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Không thể xóa tài khoản');
+            }
+
+            // Xóa thông tin đăng nhập nếu xóa chính mình
+            const currentUser = this.getCurrentUser();
+            if (currentUser && currentUser.index === index) {
+                this.clearLoginData();
+            }
+
+            return {
+                success: data.success,
+                message: data.message || 'Đã xóa tài khoản thành công'
+            };
         } catch (error) {
-        if (error.name === 'TimeoutError') {
-            throw new Error('Request timeout. Vui lòng thử lại sau.');
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Delete account error:', error);
+            throw error;
         }
-        console.error('Delete account error:', error);
-        throw error;
+    }
+
+    /**
+     * Test gửi email (debug)
+     * @param {Object} emailData - Dữ liệu email test
+     * @returns {Promise} Promise với kết quả gửi email
+     */
+    static async testEmail(emailData) {
+        try {
+            const url = getApiUrl(API_ENDPOINTS.ACCOUNT.TEST_EMAIL);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(emailData),
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Không thể gửi email test');
+            }
+
+            return {
+                success: data.success,
+                message: data.message || 'Email test đã được gửi'
+            };
+        } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Test email error:', error);
+            throw error;
         }
+    }
+
+    /**
+     * Đăng xuất
+     */
+    static logout() {
+        this.clearLoginData();
+    }
+
+    /**
+     * Kiểm tra xem có đang đăng nhập không
+     * @returns {boolean}
+     */
+    static isLoggedIn() {
+        return !!this.getCurrentUser();
+    }
+
+    /**
+     * Lấy token từ localStorage
+     * @returns {string|null}
+     */
+    static getToken() {
+        return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    }
+
+    /**
+     * Lấy thông tin user hiện tại (alias của getCurrentUser)
+     * @returns {Object|null}
+     */
+    static getUser() {
+        return this.getCurrentUser();
+    }
+
+    /**
+     * Lấy userId hiện tại
+     * @returns {number|null}
+     */
+    static getUserId() {
+        const user = this.getCurrentUser();
+        return user ? user.index : null;
     }
 }
 

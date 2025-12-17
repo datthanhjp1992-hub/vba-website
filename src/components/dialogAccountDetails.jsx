@@ -1,4 +1,6 @@
-// [file name]: dialogAccountDetails.jsx
+//[FileName]: dialogAccountDetails.jsx
+//[Version]: 1.0
+//[Content]: Đây là component phụ trách công việc hiển thị thông tin người dùng
 
 import React, { useState, useEffect } from 'react';
 import '../css/dialogAccountDetails.css';
@@ -101,6 +103,16 @@ const DialogAccountDetails = ({ userId, onBack, onDeleteSuccess }) => {
   const cancelDelete = () => {
     setShowDeleteConfirm(false);
     setDeleteMessage({ type: '', text: '' });
+  };
+
+  // Hàm xử lý khi bấm nút chỉnh sửa
+  const handleEditClick = () => {
+    if (userId && window.showAccountChangeDialog) {
+      // Gọi hàm global để mở dialog thay đổi tài khoản
+      window.showAccountChangeDialog(userId);
+    } else {
+      console.error('Không thể mở dialog chỉnh sửa. UserId:', userId);
+    }
   };
 
   // Hàm tính tuổi dựa vào năm sinh
@@ -221,13 +233,11 @@ const DialogAccountDetails = ({ userId, onBack, onDeleteSuccess }) => {
       </div>
 
       <div className="action-buttons">
-        <button className="edit-btn" onClick={() => console.log('Edit clicked')}>
+        {/* Nút chỉnh sửa thông tin */}
+        <button className="edit-btn" onClick={handleEditClick}>
           ✏️ Chỉnh sửa thông tin
         </button>
-        <button className="change-password-btn" onClick={() => console.log('Change password clicked')}>
-          🔒 Đổi mật khẩu
-        </button>
-        
+                
         {/* Nút xóa tài khoản */}
         <button 
           className="delete-btn"
