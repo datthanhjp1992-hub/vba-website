@@ -37,6 +37,13 @@ const LeftPanel = () => {
     }
   }
 
+  // Mở telex app
+  const handleOpenTELEXApp = () => {
+    if (window.resetToDefaultView) {
+      window.showAppTELEX();
+    }
+  }
+
   // Chuyển về trang Account Details - SỬA LẠI Ở ĐÂY
   const handleBackToAccountDetails = (e) => {
     e.preventDefault();
@@ -238,6 +245,7 @@ const LeftPanel = () => {
                 )}
               </a>
             </li>
+            <li><a href="#" onClick={handleOpenTELEXApp}>TELEX APP</a></li>
             <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
             <li><a href="/messages">✉️ Tin nhắn</a></li>
             <li><a href="/notifications">🔔 Thông báo</a></li>

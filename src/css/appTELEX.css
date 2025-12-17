@@ -1,0 +1,233 @@
+/* ./css/TelexVietnameseInput.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.telex-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.telex-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.telex-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.telex-description {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+.telex-guide {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.telex-guide h3 {
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.guide-item {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border-left: 3px solid #667eea;
+}
+
+.guide-item strong {
+  color: #764ba2;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.telex-main {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
+}
+
+.telex-textarea {
+  width: 100%;
+  min-height: 300px;
+  padding: 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  line-height: 1.8;
+}
+
+.telex-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.telex-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.telex-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.telex-btn {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.telex-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.telex-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.telex-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.telex-btn-copy {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.telex-btn-clear {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.telex-examples {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.telex-examples h3 {
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.telex-examples ul {
+  list-style: none;
+  padding: 0;
+}
+
+.telex-examples li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 1rem;
+  border-left: 3px solid #764ba2;
+}
+
+.telex-examples code {
+  background: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #764ba2;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .telex-container {
+    padding: 1rem;
+  }
+
+  .telex-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .telex-description {
+    font-size: 1rem;
+  }
+
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .telex-main {
+    padding: 1.5rem;
+  }
+
+  .telex-textarea {
+    min-height: 250px;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .telex-actions {
+    flex-direction: column;
+  }
+
+  .telex-btn {
+    width: 100%;
+  }
+}
+
+/* Animation cho button khi copy thành công */
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.telex-btn-copy:active {
+  animation: successPulse 0.3s ease;
+}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../css/panel_center.css';
 import DialogAccountRegist from './dialogAccountRegist';
 import DialogAccountDetails from './dialogAccountDetails';
+import TelexVietnameseInput from './appTELEX';
 
 const CenterPanel = () => {
   const [currentView, setCurrentView] = useState('default');
@@ -25,6 +26,11 @@ const CenterPanel = () => {
       setCurrentView('register');
     };
 
+    // Hàm để hiển thị phần mềm telex
+    window.showAppTELEX =()=>{
+      console.log('Show telex application');
+      setCurrentView('appTELEX');
+    }
     // Hàm reset về default
     window.resetToDefaultView = () => {
       console.log('Resetting to default view');
@@ -37,6 +43,7 @@ const CenterPanel = () => {
     return () => {
       delete window.showAccountDetails;
       delete window.showRegisterDialog;
+      delete window.showAppTELEX;
       delete window.resetToDefaultView;
     };
   }, []);
@@ -71,6 +78,11 @@ const CenterPanel = () => {
           />
         );
       
+      case 'appTELEX':
+        return (
+          <TelexVietnameseInput
+          />
+        )
       default:
         return (
           <div className="default-content">
