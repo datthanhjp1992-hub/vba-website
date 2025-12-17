@@ -10,6 +10,7 @@ import {
     SERVER_CONFIG
 } from '../services/constants';
 import '../css/panel_bottom.css';
+import DialogContactInformation from './dialogContactInformation';
 
 const BottomPanel = () => {
   const currentYear = new Date().getFullYear();
@@ -129,13 +130,9 @@ const BottomPanel = () => {
         
         {/* Main Footer Content */}
         <div className="footer-content">
-          <div className="contact-info">
-            <h3>Thông tin liên hệ</h3>
-            <p>Email: contact@example.com</p>
-            <p>Điện thoại: (0123) 456-789</p>
-            <p>Địa chỉ: 123 Đường ABC, TP.HCM</p>
+          <div>
+          <DialogContactInformation />
           </div>
-          
           <div className="quick-links">
             <h3>Liên kết nhanh</h3>
             <a href="/privacy">Chính sách bảo mật</a>
