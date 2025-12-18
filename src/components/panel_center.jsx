@@ -13,6 +13,7 @@ import DialogAccountDetails from './dialogAccountDetails';
 import DialogAccountChange from './dialogAccountChange'; // Thêm import mới
 import TelexVietnameseInput from './appTELEX';
 import PageContactInformation from './pageContactInformation';
+import HomePage from './pageHomePage';
 
 const CenterPanel = () => {
   const [currentView, setCurrentView] = useState('default');
@@ -136,11 +137,7 @@ const CenterPanel = () => {
         );
       default:
         return (
-          <div className="default-content">
-            <h2>Welcome to the Application</h2>
-            <p>This is the default view.</p>
-            {/* Thêm nội dung mặc định của bạn ở đây */}
-          </div>
+          <HomePage />
         );
     }
   };
