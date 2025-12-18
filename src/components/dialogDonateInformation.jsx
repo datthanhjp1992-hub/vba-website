@@ -6,7 +6,7 @@ import '../css/dialogDonateInformation.css'; // Nếu có file CSS riêng
 const DialogDonateInformation = () => {
     return (
         <div className="dialog-donate-information">
-            <h3>Thông Donate cho page</h3>
+            <h3>Thông tin Donate cho page</h3>
             <p>Ngân hàng: {BANK_INFORMATION.BANK_NAME}</p>
             <p>Mã Chi Nhánh: {BANK_INFORMATION.BANK_BRANCH}</p>
             <p>Tên Chi Nhánh: {BANK_INFORMATION.BANK_BRANCH_NAME}</p>

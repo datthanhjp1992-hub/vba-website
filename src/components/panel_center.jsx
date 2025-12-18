@@ -12,6 +12,7 @@ import DialogAccountRegist from './dialogAccountRegist';
 import DialogAccountDetails from './dialogAccountDetails';
 import DialogAccountChange from './dialogAccountChange'; // Thêm import mới
 import TelexVietnameseInput from './appTELEX';
+import PageContactInformation from './pageContactInformation';
 
 const CenterPanel = () => {
   const [currentView, setCurrentView] = useState('default');
@@ -41,6 +42,12 @@ const CenterPanel = () => {
       setCurrentView('appTELEX');
     };
 
+    // Hàm để hiển thị phần mềm telex
+    window.showPageContactInformation =()=>{
+      console.log('Show Page Contact Information');
+      setCurrentView('pageContactInformation');
+    };
+
     // Hàm để hiển thị thay đổi tài khoản
     window.showAccountChangeDialog = (userId) => {
       console.log('Opening account change dialog for user ID:', userId);
@@ -65,6 +72,7 @@ const CenterPanel = () => {
       delete window.showAppTELEX;
       delete window.showAccountChangeDialog;
       delete window.resetToDefaultView;
+      delete window.showPageContactInformation;
     };
   }, []);
 
@@ -122,7 +130,10 @@ const CenterPanel = () => {
             onChangeSuccess={handleAccountChangeSuccess}
           />
         );
-      
+      case 'pageContactInformation':
+        return (
+          <PageContactInformation />
+        );
       default:
         return (
           <div className="default-content">
