@@ -246,9 +246,7 @@ const LeftPanel = () => {
               </a>
             </li>
             <li><a href="#" onClick={handleOpenTELEXApp}>TELEX APP</a></li>
-            <li><a href="/settings">⚙️ Cài đặt tài khoản</a></li>
-            <li><a href="/messages">✉️ Tin nhắn</a></li>
-            <li><a href="/notifications">🔔 Thông báo</a></li>
+            <li><a href="#">Tạo bài viết mới</a></li>
             
             {AccountService.isAdmin() && (
               <li><a href="/admin">👑 Quản trị hệ thống</a></li>
