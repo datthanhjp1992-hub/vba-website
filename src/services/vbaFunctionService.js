@@ -1,9 +1,10 @@
 //[file name]: vba_function_service.js
-//[Version] 1.0: Service cho quản lý VBA functions
+//[Version] 2.0: Service cho quản lý VBA functions với cấu trúc mới
 
 /**
  * Service để xử lý các API liên quan đến VBA functions
  * Tương tác với backend Flask qua API routes đã định nghĩa
+ * Hỗ trợ cấu trúc mới: ID là số tự tăng, thêm cột type
  */
 
 import { 
@@ -24,17 +25,17 @@ class VBAFunctionService {
      * Lấy danh sách tất cả VBA functions
      * @param {Object} options - Tùy chọn filter và pagination
      * @param {boolean} options.show_deleted - Hiển thị các bản ghi đã xóa mềm
-     * @param {number} options.prefix - Loại function (0=ALL, 1=EXCEL, 2=ACCESS, 3=POWERPOINT, 4=OTHER)
+     * @param {number} options.type - Loại function (0=ALL, 1=EXCEL, 2=ACCESS, 3=POWERPOINT, 4=OTHER)
      * @returns {Promise} Promise với danh sách functions
      */
     static async getAllFunctions(options = {}) {
         try {
-            const { show_deleted = false, prefix = 0 } = options;
+            const { show_deleted = false, type = 0 } = options;
             
             // Xây dựng query parameters
             const params = new URLSearchParams();
             if (show_deleted) params.append('show_deleted', 'true');
-            if (prefix !== undefined) params.append('prefix', prefix.toString());
+            if (type !== undefined) params.append('type', type.toString());
             
             const url = `${getApiUrl('/api/vba-functions')}${params.toString() ? '?' + params.toString() : ''}`;
 
@@ -70,12 +71,12 @@ class VBAFunctionService {
 
     /**
      * Lấy thông tin chi tiết một VBA function
-     * @param {string} functionId - ID của function (ví dụ: EXC-0001)
+     * @param {number} functionId - ID số của function (ví dụ: 1, 2, 3...)
      * @returns {Promise} Promise với thông tin function
      */
     static async getFunctionDetail(functionId) {
         try {
-            if (!functionId) {
+            if (!functionId && functionId !== 0) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -106,6 +107,35 @@ class VBAFunctionService {
                 throw new Error('Request timeout. Vui lòng thử lại sau.');
             }
             console.error('Get VBA function detail error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Lấy function theo display ID (EXC-0001 format)
+     * @param {string} displayId - Display ID dạng EXC-0001
+     * @returns {Promise} Promise với thông tin function
+     */
+    static async getFunctionByDisplayId(displayId) {
+        try {
+            if (!displayId) {
+                throw new Error('Display ID là bắt buộc');
+            }
+
+            // Tách số từ display ID
+            const parts = displayId.split('-');
+            if (parts.length !== 2) {
+                throw new Error('Display ID không đúng định dạng (EXC-0001)');
+            }
+            
+            const functionId = parseInt(parts[1]);
+            if (isNaN(functionId)) {
+                throw new Error('Không thể chuyển đổi Display ID thành số');
+            }
+
+            return await this.getFunctionDetail(functionId);
+        } catch (error) {
+            console.error('Get function by display ID error:', error);
             throw error;
         }
     }
@@ -155,8 +185,9 @@ class VBAFunctionService {
             return {
                 success: data.success,
                 data: data.data,
-                message: data.message || SUCCESS_MESSAGES.REGISTER_SUCCESS,
-                auto_generated_id: data.auto_generated_id
+                message: data.message || SUCCESS_MESSAGES.CREATE_SUCCESS,
+                id: data.id,
+                display_id: data.display_id
             };
         } catch (error) {
             if (error.name === 'TimeoutError') {
@@ -169,13 +200,13 @@ class VBAFunctionService {
 
     /**
      * Cập nhật VBA function
-     * @param {string} functionId - ID của function cần cập nhật
+     * @param {number} functionId - ID số của function cần cập nhật
      * @param {Object} functionData - Dữ liệu cần cập nhật
      * @returns {Promise} Promise với kết quả cập nhật
      */
     static async updateFunction(functionId, functionData) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -217,12 +248,12 @@ class VBAFunctionService {
 
     /**
      * Xóa cứng VBA function (xóa vĩnh viễn)
-     * @param {string} functionId - ID của function cần xóa
+     * @param {number} functionId - ID số của function cần xóa
      * @returns {Promise} Promise với kết quả xóa
      */
     static async deleteFunction(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -257,12 +288,12 @@ class VBAFunctionService {
 
     /**
      * Xóa mềm VBA function (chỉ đặt cờ delete_flag)
-     * @param {string} functionId - ID của function cần xóa mềm
+     * @param {number} functionId - ID số của function cần xóa mềm
      * @returns {Promise} Promise với kết quả xóa mềm
      */
     static async softDeleteFunction(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -298,12 +329,12 @@ class VBAFunctionService {
 
     /**
      * Khôi phục VBA function đã xóa mềm
-     * @param {string} functionId - ID của function cần khôi phục
+     * @param {number} functionId - ID số của function cần khôi phục
      * @returns {Promise} Promise với kết quả khôi phục
      */
     static async restoreFunction(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -339,12 +370,12 @@ class VBAFunctionService {
 
     /**
      * Tăng số lượt like cho function
-     * @param {string} functionId - ID của function
+     * @param {number} functionId - ID số của function
      * @returns {Promise} Promise với kết quả tăng like
      */
     static async incrementLike(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -381,12 +412,12 @@ class VBAFunctionService {
 
     /**
      * Tăng số lượt download cho function
-     * @param {string} functionId - ID của function
+     * @param {number} functionId - ID số của function
      * @returns {Promise} Promise với kết quả tăng download
      */
     static async incrementDownload(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 throw new Error('Function ID là bắt buộc');
             }
 
@@ -480,7 +511,8 @@ class VBAFunctionService {
             return {
                 success: data.success,
                 message: data.message || '',
-                table_created: data.table_created || false
+                table_created: data.table_created || false,
+                needs_migration: data.needs_migration || false
             };
         } catch (error) {
             if (error.name === 'TimeoutError') {
@@ -495,40 +527,42 @@ class VBAFunctionService {
      * Tìm kiếm VBA functions
      * @param {string} searchTerm - Từ khóa tìm kiếm
      * @param {Object} options - Tùy chọn tìm kiếm
+     * @param {number} options.type - Loại function để filter
      * @returns {Promise} Promise với kết quả tìm kiếm
      */
     static async searchFunctions(searchTerm, options = {}) {
         try {
-            // Lấy tất cả functions và filter client-side
-            // (Có thể implement server-side search nếu backend hỗ trợ)
-            const result = await this.getAllFunctions(options);
+            const url = `${getApiUrl('/api/vba-functions/search')}?q=${encodeURIComponent(searchTerm)}`;
             
-            if (!result.success || !result.data) {
-                return result;
+            if (options.type) {
+                url += `&type=${options.type}`;
             }
 
-            if (!searchTerm || searchTerm.trim() === '') {
-                return result;
-            }
-
-            const searchLower = searchTerm.toLowerCase().trim();
-            const filteredData = result.data.filter(func => {
-                return (
-                    (func.title && func.title.toLowerCase().includes(searchLower)) ||
-                    (func.content && func.content.toLowerCase().includes(searchLower)) ||
-                    (func.comment && func.comment.toLowerCase().includes(searchLower)) ||
-                    (func.id && func.id.toLowerCase().includes(searchLower)) ||
-                    (func.creater && func.creater.toLowerCase().includes(searchLower))
-                );
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
             });
 
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Không thể tìm kiếm functions');
+            }
+
             return {
-                success: true,
-                data: filteredData,
-                count: filteredData.length,
-                message: `Tìm thấy ${filteredData.length} kết quả cho "${searchTerm}"`
+                success: data.success,
+                data: data.data || [],
+                count: data.count || 0,
+                message: data.message || `Tìm thấy ${data.count || 0} kết quả cho "${searchTerm}"`
             };
         } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
             console.error('Search VBA functions error:', error);
             throw error;
         }
@@ -540,7 +574,7 @@ class VBAFunctionService {
      * @returns {Promise} Promise với danh sách functions
      */
     static async getFunctionsByType(functionType) {
-        return this.getAllFunctions({ prefix: functionType });
+        return this.getAllFunctions({ type: functionType });
     }
 
     /**
@@ -550,21 +584,13 @@ class VBAFunctionService {
      */
     static async getLatestFunctions(limit = 5) {
         try {
-            const result = await this.getAllFunctions();
+            const stats = await this.getFunctionsStats();
             
-            if (!result.success || !result.data) {
-                return result;
+            if (!stats.success || !stats.data || !stats.data.latest_functions) {
+                throw new Error('Không thể lấy functions mới nhất');
             }
 
-            // Sắp xếp theo created_at giảm dần
-            const sortedData = [...result.data].sort((a, b) => {
-                const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-                const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-                return dateB - dateA;
-            });
-
-            // Lấy số lượng theo limit
-            const latestData = sortedData.slice(0, limit);
+            const latestData = stats.data.latest_functions.slice(0, limit);
 
             return {
                 success: true,
@@ -642,12 +668,12 @@ class VBAFunctionService {
 
     /**
      * Kiểm tra ID function có tồn tại không
-     * @param {string} functionId - ID cần kiểm tra
+     * @param {number} functionId - ID số cần kiểm tra
      * @returns {Promise} Promise với kết quả kiểm tra
      */
     static async checkFunctionId(functionId) {
         try {
-            if (!functionId) {
+            if (functionId === undefined || functionId === null) {
                 return {
                     success: false,
                     exists: false,
@@ -673,60 +699,96 @@ class VBAFunctionService {
     }
 
     /**
-     * Export function data
-     * @param {string} functionId - ID của function
-     * @returns {Object} Dữ liệu function dưới dạng object
+     * Lấy loại function từ type number
+     * @param {number} type - Số type (1-4)
+     * @returns {string} Tên loại function
      */
-    static exportFunctionData(functionData) {
-        if (!functionData) {
-            return null;
-        }
-
-        return {
-            id: functionData.id,
-            title: functionData.title,
-            content: functionData.content,
-            comment: functionData.comment,
-            type: this.getFunctionTypeFromId(functionData.id),
-            like: functionData.like,
-            download: functionData.download,
-            created_at: functionData.created_at,
-            creater: functionData.creater,
-            updated_at: functionData.updated_at
+    static getFunctionTypeName(type) {
+        const typeMap = {
+            1: 'EXCEL',
+            2: 'ACCESS',
+            3: 'POWERPOINT',
+            4: 'OTHER'
         };
+        
+        return typeMap[type] || 'OTHER';
     }
 
     /**
-     * Lấy loại function từ ID
-     * @param {string} functionId - ID của function
-     * @returns {string} Loại function
+     * Lấy prefix từ type number
+     * @param {number} type - Số type (1-4)
+     * @returns {string} Prefix string
      */
-    static getFunctionTypeFromId(functionId) {
-        if (!functionId) return 'OTHER';
-        
-        const prefix = functionId.split('-')[0];
-        const typeMap = {
-            'EXC': 'EXCEL',
-            'ACC': 'ACCESS',
-            'POW': 'POWERPOINT',
-            'OTH': 'OTHER'
+    static getPrefixFromType(type) {
+        const prefixMap = {
+            1: 'EXC',
+            2: 'ACC',
+            3: 'POW',
+            4: 'OTH'
         };
         
-        return typeMap[prefix] || 'OTHER';
+        return prefixMap[type] || 'OTH';
+    }
+
+    /**
+     * Lấy display ID từ ID và type
+     * @param {number} id - ID số
+     * @param {number} type - Loại function (1-4)
+     * @returns {string} Display ID dạng EXC-0001
+     */
+    static getDisplayId(id, type) {
+        if (!id && id !== 0) return '';
+        const prefix = this.getPrefixFromType(type);
+        return `${prefix}-${id.toString().padStart(4, '0')}`;
+    }
+
+    /**
+     * Lấy type từ prefix
+     * @param {string} prefix - Prefix string (EXC, ACC, POW, OTH)
+     * @returns {number} Type number (1-4)
+     */
+    static getTypeFromPrefix(prefix) {
+        const prefixMap = {
+            'EXC': 1,
+            'ACC': 2,
+            'POW': 3,
+            'OTH': 4
+        };
+        
+        return prefixMap[prefix?.toUpperCase()] || 4;
+    }
+
+    /**
+     * Chuyển đổi display ID sang ID số
+     * @param {string} displayId - Display ID dạng EXC-0001
+     * @returns {Object} {id: number, type: number}
+     */
+    static parseDisplayId(displayId) {
+        if (!displayId) return null;
+        
+        const parts = displayId.split('-');
+        if (parts.length !== 2) return null;
+        
+        const prefix = parts[0];
+        const id = parseInt(parts[1]);
+        
+        return {
+            id: isNaN(id) ? null : id,
+            type: this.getTypeFromPrefix(prefix)
+        };
     }
 
     /**
      * Lấy màu cho loại function
-     * @param {string} functionId - ID của function
+     * @param {number} type - Số type (1-4)
      * @returns {string} Mã màu hex
      */
-    static getFunctionTypeColor(functionId) {
-        const type = this.getFunctionTypeFromId(functionId);
+    static getFunctionTypeColor(type) {
         const colorMap = {
-            'EXCEL': '#217346',     // Excel green
-            'ACCESS': '#A4373A',    // Access red
-            'POWERPOINT': '#D24726', // PowerPoint orange
-            'OTHER': '#6C757D'      // Bootstrap secondary gray
+            1: '#217346',     // Excel green
+            2: '#A4373A',    // Access red
+            3: '#D24726',    // PowerPoint orange
+            4: '#6C757D'     // Bootstrap secondary gray
         };
         
         return colorMap[type] || '#6C757D';
@@ -734,19 +796,94 @@ class VBAFunctionService {
 
     /**
      * Lấy icon cho loại function
-     * @param {string} functionId - ID của function
+     * @param {number} type - Số type (1-4)
      * @returns {string} Tên icon (FontAwesome class)
      */
-    static getFunctionTypeIcon(functionId) {
-        const type = this.getFunctionTypeFromId(functionId);
+    static getFunctionTypeIcon(type) {
         const iconMap = {
-            'EXCEL': 'fa-solid fa-file-excel',
-            'ACCESS': 'fa-solid fa-database',
-            'POWERPOINT': 'fa-solid fa-file-powerpoint',
-            'OTHER': 'fa-solid fa-file-code'
+            1: 'fa-solid fa-file-excel',
+            2: 'fa-solid fa-database',
+            3: 'fa-solid fa-file-powerpoint',
+            4: 'fa-solid fa-file-code'
         };
         
         return iconMap[type] || 'fa-solid fa-file-code';
+    }
+
+    /**
+     * Lấy tất cả options type cho select dropdown
+     * @returns {Array} Mảng các option type
+     */
+    static getTypeOptions() {
+        return [
+            { value: 1, label: 'Excel', color: '#217346', icon: 'fa-solid fa-file-excel' },
+            { value: 2, label: 'Access', color: '#A4373A', icon: 'fa-solid fa-database' },
+            { value: 3, label: 'PowerPoint', color: '#D24726', icon: 'fa-solid fa-file-powerpoint' },
+            { value: 4, label: 'Other', color: '#6C757D', icon: 'fa-solid fa-file-code' }
+        ];
+    }
+
+    /**
+     * Format function data cho hiển thị
+     * @param {Object} functionData - Dữ liệu function từ API
+     * @returns {Object} Dữ liệu đã format
+     */
+    static formatFunctionData(functionData) {
+        if (!functionData) return null;
+        
+        const displayId = this.getDisplayId(functionData.id, functionData.type);
+        const typeName = this.getFunctionTypeName(functionData.type);
+        const typeColor = this.getFunctionTypeColor(functionData.type);
+        const typeIcon = this.getFunctionTypeIcon(functionData.type);
+        
+        return {
+            ...functionData,
+            display_id: displayId,
+            type_name: typeName,
+            type_color: typeColor,
+            type_icon: typeIcon,
+            formatted_created_at: functionData.created_at ? 
+                new Date(functionData.created_at).toLocaleDateString('vi-VN') : '',
+            formatted_updated_at: functionData.updated_at ? 
+                new Date(functionData.updated_at).toLocaleDateString('vi-VN') : ''
+        };
+    }
+
+    /**
+     * Format danh sách functions cho hiển thị
+     * @param {Array} functions - Mảng functions từ API
+     * @returns {Array} Mảng functions đã format
+     */
+    static formatFunctionsList(functions) {
+        if (!Array.isArray(functions)) return [];
+        
+        return functions.map(func => this.formatFunctionData(func));
+    }
+
+    /**
+     * Validate function data trước khi gửi lên server
+     * @param {Object} functionData - Dữ liệu function
+     * @returns {Object} {isValid: boolean, errors: Array}
+     */
+    static validateFunctionData(functionData) {
+        const errors = [];
+        
+        if (!functionData.content || functionData.content.trim() === '') {
+            errors.push('Nội dung function là bắt buộc');
+        }
+        
+        if (functionData.title && functionData.title.length > 50) {
+            errors.push('Tiêu đề không được vượt quá 50 ký tự');
+        }
+        
+        if (functionData.type && ![1, 2, 3, 4].includes(parseInt(functionData.type))) {
+            errors.push('Loại function không hợp lệ');
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
     }
 }
 
