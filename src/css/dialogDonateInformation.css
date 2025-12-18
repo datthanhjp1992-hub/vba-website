@@ -1,6 +1,6 @@
-/* dialogContactInformation.css */
+/* dialogDonateInformation.css */
 
-.contact-info {
+.dialog-donate-information {
     padding: 15px;
     background-color: rgb(52 73 94);
     border-radius: 8px;
@@ -8,7 +8,7 @@
     color: #ffffff;
 }
 
-.contact-info h3 {
+.dialog-donate-information h3 {
     margin-top: 0;
     color: #f1c40f; /* màu tiêu đề nổi bật */
     font-size: 1.15rem;
@@ -16,7 +16,7 @@
     font-weight: 600;
 }
 
-.contact-info p {
+.dialog-donate-information p {
     margin: 5px 0;
     color: #ffffff;
     font-size: 0.9rem;

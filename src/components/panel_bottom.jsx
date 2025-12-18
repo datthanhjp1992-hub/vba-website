@@ -11,6 +11,7 @@ import {
 } from '../services/constants';
 import '../css/panel_bottom.css';
 import DialogContactInformation from './dialogContactInformation';
+import DialogDonateInformation from './dialogDonateInformation';
 
 const BottomPanel = () => {
   const currentYear = new Date().getFullYear();
@@ -130,24 +131,18 @@ const BottomPanel = () => {
         
         {/* Main Footer Content */}
         <div className="footer-content">
+
+          {/* Contact Information */}
           <div>
-          <DialogContactInformation />
+           <DialogContactInformation />
           </div>
-          <div className="quick-links">
-            <h3>Liên kết nhanh</h3>
-            <a href="/privacy">Chính sách bảo mật</a>
-            <a href="/terms">Điều khoản sử dụng</a>
-            <a href="/faq">FAQ</a>
+
+          {/* Donate */}
+          <div>
+            <DialogDonateInformation />
           </div>
           
-          <div className="social-media">
-            <h3>Mạng xã hội</h3>
-            <div className="social-icons">
-              <a href="#">Facebook</a>
-              <a href="#">Twitter</a>
-              <a href="#">Instagram</a>
-            </div>
-          </div>
+
         </div>
         
         <div className="copyright">
