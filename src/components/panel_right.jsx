@@ -36,26 +36,6 @@ const RightPanel = () => {
 
   return (
     <aside className="right-panel">
-      <div className="advertisements">
-        <h3>Quảng cáo</h3>
-        {advertisements.map(ad => (
-          <div key={ad.id} className="ad-card">
-            <img 
-              src={ad.image} 
-              alt={ad.title}
-              className="ad-image"
-            />
-            <div className="ad-content">
-              <h4>{ad.title}</h4>
-              <p>{ad.description}</p>
-              <a href={ad.link} className="ad-link">
-                Xem ngay →
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
-      
       <div className="trending-posts">
         <h3>Bài viết nổi bật</h3>
         <ul>

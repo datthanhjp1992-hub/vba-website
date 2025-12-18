@@ -606,7 +606,8 @@ const PageVBAFunctionManager = () => {
                                         </div>
                                         <div className="info-item">
                                             <label>Người tạo:</label>
-                                            <span>{selectedFunction.creater || 'Unknown'}</span>
+                                            {/* <span>{selectedFunction.creater || 'Unknown'}</span> */}
+                                            <span>{currentUser.username || 'Unknown'}</span>
                                         </div>
                                         <div className="info-item">
                                             <label>Trạng thái:</label>
