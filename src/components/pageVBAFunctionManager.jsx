@@ -543,13 +543,14 @@ const PageVBAFunctionManager = () => {
                             <div className="detail-header">
                                 <h3>Chi tiết Function</h3>
                                 <div className="detail-actions">
+
                                     <button 
                                         className="btn btn-edit" 
                                         onClick={handleEditFunction}
-                                        disabled={selectedFunction.delete_flag || !AccountService.checkPermission(selectedFunction.creater)}
                                     >
                                         ✏️ Chỉnh sửa
                                     </button>
+
                                     {selectedFunction.delete_flag ? (
                                         <button 
                                             className="btn btn-restore" 
