@@ -448,7 +448,7 @@ const PageVBAFunctionManager = () => {
             {/* Main Content - Split 3/7 */}
             <div className="manager-content">
                 {/* Left Panel - 30% */}
-                <div className="left-panel">
+                <div className="VBAFunctionManager-left-panel">
                     <div className="panel-header">
                         <h3>Danh sách Functions ({filteredFunctions.length})</h3>
                         
@@ -537,7 +537,7 @@ const PageVBAFunctionManager = () => {
                 </div>
                 
                 {/* Right Panel - 70% */}
-                <div className="right-panel">
+                <div className="vbaFunctionManager-right-panel">
                     {selectedFunction ? (
                         <div className="function-detail">
                             <div className="detail-header">
