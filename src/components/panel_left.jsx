@@ -43,7 +43,13 @@ const LeftPanel = () => {
       window.showAppTELEX();
     }
   }
-
+  
+  // Mở telex app
+  const handleShowVBAFunctionManager = () => {
+    if (window.resetToDefaultView) {
+      window.showPageVBAFunctionManager();
+    }
+  }
   // Chuyển về trang Account Details - SỬA LẠI Ở ĐÂY
   const handleBackToAccountDetails = (e) => {
     e.preventDefault();
@@ -246,7 +252,7 @@ const LeftPanel = () => {
               </a>
             </li>
             <li><a href="#" onClick={handleOpenTELEXApp}>TELEX APP</a></li>
-            <li><a href="#">Tạo bài viết mới</a></li>
+            <li><a href="#" onClick={handleShowVBAFunctionManager}>Tạo bài viết mới</a></li>
             
             {AccountService.isAdmin() && (
               <li><a href="/admin">👑 Quản trị hệ thống</a></li>

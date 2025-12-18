@@ -341,11 +341,13 @@ class AccountService {
      */
     static saveLoginData(userData) {
         try {
-            // Tạo token giả (có thể thay bằng JWT thực từ server)
-            const token = btoa(JSON.stringify(userData) + Date.now());
+            // Mã hóa chuỗi JSON trước khi dùng btoa
+            const jsonString = JSON.stringify(userData);
+            const encodedString = encodeURIComponent(jsonString);
+            const token = btoa(encodedString + Date.now());
             
             localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-            localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
+            localStorage.setItem(STORAGE_KEYS.USER_DATA, jsonString);
             localStorage.setItem(STORAGE_KEYS.LAST_LOGIN, new Date().toISOString());
         } catch (error) {
             console.error('Save login data error:', error);

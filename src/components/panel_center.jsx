@@ -13,6 +13,7 @@ import DialogAccountDetails from './dialogAccountDetails';
 import DialogAccountChange from './dialogAccountChange'; // Thêm import mới
 import TelexVietnameseInput from './appTELEX';
 import PageContactInformation from './pageContactInformation';
+import PageVBAFunctionManager from './pageVBAFunctionManager';
 import HomePage from './pageHomePage';
 
 const CenterPanel = () => {
@@ -49,6 +50,12 @@ const CenterPanel = () => {
       setCurrentView('pageContactInformation');
     };
 
+    // Hàm manager Code
+    window.showPageVBAFunctionManager =() =>{
+      console.log('Show Page VBA function manager');
+      setCurrentView('pageVBAFunctionManager');
+    }
+
     // Hàm để hiển thị thay đổi tài khoản
     window.showAccountChangeDialog = (userId) => {
       console.log('Opening account change dialog for user ID:', userId);
@@ -74,6 +81,7 @@ const CenterPanel = () => {
       delete window.showAccountChangeDialog;
       delete window.resetToDefaultView;
       delete window.showPageContactInformation;
+      delete window.showPageVBAFunctionManager;
     };
   }, []);
 
@@ -119,7 +127,10 @@ const CenterPanel = () => {
         return (
           <TelexVietnameseInput />
         );
-
+      case 'pageVBAFunctionManager':
+        return (
+          <PageVBAFunctionManager />
+        );
       case 'account-change':
         return (
           <DialogAccountChange

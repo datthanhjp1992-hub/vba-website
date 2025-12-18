@@ -27,7 +27,7 @@ body {
 .main-container {
   display: flex;
   flex: 1;
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
   width: 100%;
 }
@@ -38,7 +38,7 @@ body {
 }
 
 .center-panel {
-  flex: 3; /* 3 phần */
+  flex: 5; /* 3 phần */
 }
 
 .right-panel {
