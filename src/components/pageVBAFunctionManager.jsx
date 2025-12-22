@@ -241,10 +241,19 @@ const PageVBAFunctionManager = () => {
             
             if (result.success) {
                 showNotification(result.message || SUCCESS_MESSAGES.DELETE_SUCCESS, 'success');
-                loadFunctions();
                 
-                // Xóa selectedFunction nếu nó đã bị xóa
-                if (selectedFunction.id === result.data?.id) {
+                // Load lại functions
+                await loadFunctions();
+                
+                // Cập nhật selectedFunction
+                // Lọc ra function vừa xóa
+                const remainingFunctions = functions.filter(f => f.id !== selectedFunction.id);
+                
+                if (remainingFunctions.length > 0) {
+                    // Chọn function đầu tiên trong danh sách còn lại
+                    setSelectedFunction(remainingFunctions[0]);
+                } else {
+                    // Nếu không còn function nào
                     setSelectedFunction(null);
                 }
             } else {
@@ -278,7 +287,7 @@ const PageVBAFunctionManager = () => {
             
             if (result.success) {
                 showNotification(result.message || 'Đã khôi phục function thành công', 'success');
-                loadFunctions();
+                await loadFunctions();
             } else {
                 throw new Error(result.error || 'Không thể khôi phục function');
             }
