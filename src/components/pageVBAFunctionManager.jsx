@@ -1,6 +1,6 @@
 //[file name]: pageVBAFunctionManager.jsx
 //[Version] 2.0: Sử dụng services và constants có sẵn để giảm thiểu code
-
+//[Version] 2.1: Chỉnh sửa lại phương thức restore deleted function
 import React, { useState, useEffect } from 'react';
 import AccountService from '../services/account_service';
 import ConnectionService from '../services/connection_service';
@@ -284,10 +284,46 @@ const PageVBAFunctionManager = () => {
             });
             
             const result = await response.json();
-            
             if (result.success) {
                 showNotification(result.message || 'Đã khôi phục function thành công', 'success');
-                await loadFunctions();
+                
+                // OPTION A: Nếu API trả về data mới
+                if (result.data) {
+                    // Cập nhật ngay với dữ liệu mới từ server
+                    setSelectedFunction(result.data);
+                    console.log(result.data);
+                    // Cập nhật functions list với dữ liệu mới
+                    setFunctions(prev => prev.map(func => 
+                        func.id === result.data.id ? result.data : func
+                    ));
+                } 
+                // OPTION B: Nếu API không trả về data
+                else {
+                    // Load lại danh sách
+                    await loadFunctions();
+                    
+                    // Đợi state được cập nhật và tìm function mới
+                    // Cần có ID của function đang được chọn
+                    const funcId = selectedFunction.id;
+                    // Sử dụng setTimeout để đợi render cycle hoàn thành
+                    setTimeout(() => {
+                        // Tìm trong functions state hiện tại
+                        const updatedFunc = functions.find(f => f.id === funcId);
+                        if (updatedFunc) {
+                            setSelectedFunction(updatedFunc);
+                            console.log("Tim trong dong function hien tai");
+                            console.log(updatedFunc);
+                        } else {
+                            // Nếu không tìm thấy, tìm trong filteredFunctions
+                            const fromFiltered = filteredFunctions.find(f => f.id === funcId);
+                            if (fromFiltered) {
+                                setSelectedFunction(fromFiltered);
+                                console.log("Tim trong filter");
+                                console.log(fromFiltered);
+                            }
+                        }
+                    }, 100);
+                }
             } else {
                 throw new Error(result.error || 'Không thể khôi phục function');
             }
