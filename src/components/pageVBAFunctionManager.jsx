@@ -20,7 +20,7 @@ const PageVBAFunctionManager = () => {
     const [selectedFunction, setSelectedFunction] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(null);
-    
+
     // State cho dialog và form
     const [showDialog, setShowDialog] = useState(false);
     const [dialogMode, setDialogMode] = useState('add');
@@ -30,31 +30,31 @@ const PageVBAFunctionManager = () => {
         comment: '',
         type: '4'
     });
-    
+
     // State cho thông báo
     const [notification, setNotification] = useState({
         show: false,
         message: '',
         type: 'success'
     });
-    
+
     // State cho tìm kiếm và filter
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
     const [showDeleted, setShowDeleted] = useState(false);
-    
+
     // Load current user và functions
     useEffect(() => {
         loadUserAndFunctions();
     }, [showDeleted]);
-    
+
     // Tải user hiện tại và functions
     const loadUserAndFunctions = async () => {
         try {
             // Lấy user từ AccountService
             const user = AccountService.getCurrentUser();
             setCurrentUser(user);
-            
+
             if (user) {
                 await loadFunctions();
             } else {
@@ -66,19 +66,19 @@ const PageVBAFunctionManager = () => {
             setLoading(false);
         }
     };
-    
+
     // Load functions từ API
     const loadFunctions = async () => {
         try {
             setLoading(true);
             const user = AccountService.getCurrentUser();
-            
+
             if (!user || !user.index) {
                 showNotification('Vui lòng đăng nhập để quản lý functions', 'warning');
                 setLoading(false);
                 return;
             }
-            
+
             // Kiểm tra kết nối trước khi load
             const connection = await ConnectionService.quickCheck();
             if (!connection.connected) {
@@ -86,14 +86,14 @@ const PageVBAFunctionManager = () => {
                 setLoading(false);
                 return;
             }
-            
+
             // Xây dựng URL với API endpoint
             const baseUrl = SERVER_CONFIG.BASE_URL;
             const params = new URLSearchParams();
             if (showDeleted) params.append('show_deleted', 'true');
-            
+
             const url = `${baseUrl}api/vba-functions${params.toString() ? '?' + params.toString() : ''}`;
-            
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -101,26 +101,26 @@ const PageVBAFunctionManager = () => {
                     'Accept': 'application/json'
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${ERROR_MESSAGES.SERVER_ERROR}`);
             }
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 // Filter chỉ lấy functions của user hiện tại (trừ admin)
                 let userFunctions = data.data || [];
                 const isAdmin = AccountService.isAdmin();
-                
+
                 if (!isAdmin) {
-                    userFunctions = userFunctions.filter(func => 
+                    userFunctions = userFunctions.filter(func =>
                         func.creater === user.index.toString()
                     );
                 }
-                
+
                 setFunctions(userFunctions);
-                
+
                 if (userFunctions.length > 0 && !selectedFunction) {
                     setSelectedFunction(userFunctions[0]);
                 }
@@ -134,7 +134,7 @@ const PageVBAFunctionManager = () => {
             setLoading(false);
         }
     };
-    
+
     // Hiển thị thông báo
     const showNotification = (message, type = 'success') => {
         setNotification({
@@ -142,24 +142,24 @@ const PageVBAFunctionManager = () => {
             message,
             type
         });
-        
+
         setTimeout(() => {
             setNotification({ show: false, message: '', type: 'success' });
         }, 3000);
     };
-    
+
     // Xử lý chọn function
     const handleSelectFunction = (func) => {
         setSelectedFunction(func);
     };
-    
+
     // Xử lý mở dialog thêm mới
     const handleAddFunction = () => {
         if (!AccountService.isLoggedIn()) {
             showNotification('Vui lòng đăng nhập để thêm function mới', 'warning');
             return;
         }
-        
+
         setFormData({
             title: '',
             content: '',
@@ -169,21 +169,21 @@ const PageVBAFunctionManager = () => {
         setDialogMode('add');
         setShowDialog(true);
     };
-    
+
     // Xử lý mở dialog chỉnh sửa
     const handleEditFunction = () => {
         if (!selectedFunction) {
             showNotification('Vui lòng chọn function để chỉnh sửa', 'warning');
             return;
         }
-        
+
         // Kiểm tra quyền chỉnh sửa
         const isAdmin = AccountService.isAdmin();
         if (selectedFunction.creater !== AccountService.getUserId()?.toString() && !isAdmin) {
             showNotification('Bạn không có quyền chỉnh sửa function này', 'error');
             return;
         }
-        
+
         setFormData({
             title: selectedFunction.title || '',
             content: selectedFunction.content || '',
@@ -193,29 +193,29 @@ const PageVBAFunctionManager = () => {
         setDialogMode('edit');
         setShowDialog(true);
     };
-    
+
     // Xử lý xóa function
     const handleDeleteFunction = async () => {
         if (!selectedFunction) {
             showNotification('Vui lòng chọn function để xóa', 'warning');
             return;
         }
-        
+
         // Kiểm tra quyền xóa
         const isAdmin = AccountService.isAdmin();
         if (selectedFunction.creater !== AccountService.getUserId()?.toString() && !isAdmin) {
             showNotification('Bạn không có quyền xóa function này', 'error');
             return;
         }
-        
+
         if (!window.confirm(`Bạn có chắc chắn muốn xóa function "${selectedFunction.title}"?`)) {
             return;
         }
-        
+
         try {
             const baseUrl = SERVER_CONFIG.BASE_URL;
             let url, method, result;
-            
+
             if (selectedFunction.delete_flag) {
                 // Xóa cứng
                 url = `${baseUrl}api/vba-functions/${selectedFunction.id}`;
@@ -238,17 +238,17 @@ const PageVBAFunctionManager = () => {
                 });
                 result = await response.json();
             }
-            
+
             if (result.success) {
                 showNotification(result.message || SUCCESS_MESSAGES.DELETE_SUCCESS, 'success');
-                
+
                 // Load lại functions
                 await loadFunctions();
-                
+
                 // Cập nhật selectedFunction
                 // Lọc ra function vừa xóa
                 const remainingFunctions = functions.filter(f => f.id !== selectedFunction.id);
-                
+
                 if (remainingFunctions.length > 0) {
                     // Chọn function đầu tiên trong danh sách còn lại
                     setSelectedFunction(remainingFunctions[0]);
@@ -264,17 +264,17 @@ const PageVBAFunctionManager = () => {
             showNotification(`Lỗi khi xóa function: ${error.message}`, 'error');
         }
     };
-    
+
     // Xử lý khôi phục function
     const handleRestoreFunction = async () => {
         if (!selectedFunction || !selectedFunction.delete_flag) {
             return;
         }
-        
+
         try {
             const baseUrl = SERVER_CONFIG.BASE_URL;
             const url = `${baseUrl}api/vba-functions/${selectedFunction.id}/restore`;
-            
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -282,26 +282,26 @@ const PageVBAFunctionManager = () => {
                     'Accept': 'application/json'
                 }
             });
-            
+
             const result = await response.json();
             if (result.success) {
                 showNotification(result.message || 'Đã khôi phục function thành công', 'success');
-                
+
                 // OPTION A: Nếu API trả về data mới
                 if (result.data) {
                     // Cập nhật ngay với dữ liệu mới từ server
                     setSelectedFunction(result.data);
-                    console.log(result.data);
+                    // console.log(result.data);
                     // Cập nhật functions list với dữ liệu mới
-                    setFunctions(prev => prev.map(func => 
+                    setFunctions(prev => prev.map(func =>
                         func.id === result.data.id ? result.data : func
                     ));
-                } 
+                }
                 // OPTION B: Nếu API không trả về data
                 else {
                     // Load lại danh sách
                     await loadFunctions();
-                    
+                    /*
                     // Đợi state được cập nhật và tìm function mới
                     // Cần có ID của function đang được chọn
                     const funcId = selectedFunction.id;
@@ -311,18 +311,19 @@ const PageVBAFunctionManager = () => {
                         const updatedFunc = functions.find(f => f.id === funcId);
                         if (updatedFunc) {
                             setSelectedFunction(updatedFunc);
-                            console.log("Tim trong dong function hien tai");
-                            console.log(updatedFunc);
+                            // console.log("Tim trong dong function hien tai");
+                            // console.log(updatedFunc);
                         } else {
                             // Nếu không tìm thấy, tìm trong filteredFunctions
                             const fromFiltered = filteredFunctions.find(f => f.id === funcId);
                             if (fromFiltered) {
                                 setSelectedFunction(fromFiltered);
-                                console.log("Tim trong filter");
-                                console.log(fromFiltered);
+                                //console.log("Tim trong filter");
+                                //console.log(fromFiltered);
                             }
                         }
                     }, 100);
+                    */
                 }
             } else {
                 throw new Error(result.error || 'Không thể khôi phục function');
@@ -332,7 +333,7 @@ const PageVBAFunctionManager = () => {
             showNotification(`Lỗi khi khôi phục function: ${error.message}`, 'error');
         }
     };
-    
+
     // Xử lý lưu form
     const handleSaveForm = async () => {
         // Validate
@@ -340,17 +341,17 @@ const PageVBAFunctionManager = () => {
             showNotification('Nội dung function là bắt buộc', 'error');
             return;
         }
-        
+
         if (formData.title.length > 50) {
             showNotification('Tiêu đề không được vượt quá 50 ký tự', 'error');
             return;
         }
-        
+
         try {
             const baseUrl = SERVER_CONFIG.BASE_URL;
             const user = AccountService.getCurrentUser();
             let url, method, bodyData;
-            
+
             if (dialogMode === 'add') {
                 // Thêm mới
                 url = `${baseUrl}api/vba-functions`;
@@ -373,7 +374,7 @@ const PageVBAFunctionManager = () => {
                     type: parseInt(formData.type) || 4
                 };
             }
-            
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -382,9 +383,9 @@ const PageVBAFunctionManager = () => {
                 },
                 body: JSON.stringify(bodyData)
             });
-            
+
             const result = await response.json();
-            
+
             if (result.success) {
                 showNotification(
                     dialogMode === 'add' ? SUCCESS_MESSAGES.REGISTER_SUCCESS : SUCCESS_MESSAGES.UPDATE_SUCCESS,
@@ -392,7 +393,7 @@ const PageVBAFunctionManager = () => {
                 );
                 setShowDialog(false);
                 loadFunctions();
-                
+
                 // Select function mới tạo/chỉnh sửa
                 if (result.data) {
                     setSelectedFunction(result.data);
@@ -405,14 +406,14 @@ const PageVBAFunctionManager = () => {
             showNotification(`Lỗi khi lưu function: ${error.message}`, 'error');
         }
     };
-    
+
     // Filter functions
     const filteredFunctions = functions.filter(func => {
         // Filter theo type
         if (filterType !== 'all' && func.type !== parseInt(filterType)) {
             return false;
         }
-        
+
         // Filter theo search term
         if (searchTerm.trim() !== '') {
             const term = searchTerm.toLowerCase();
@@ -424,10 +425,10 @@ const PageVBAFunctionManager = () => {
                 (func.type_name && func.type_name.toLowerCase().includes(term))
             );
         }
-        
+
         return true;
     });
-    
+
     // Lấy màu cho loại function
     const getTypeColor = (type) => {
         const colorMap = {
@@ -438,7 +439,7 @@ const PageVBAFunctionManager = () => {
         };
         return colorMap[type] || '#6C757D';
     };
-    
+
     // Lấy tên loại function
     const getTypeName = (type) => {
         const nameMap = {
@@ -449,14 +450,14 @@ const PageVBAFunctionManager = () => {
         };
         return nameMap[type] || 'OTHER';
     };
-    
+
     // Format ngày tháng
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
         return date.toLocaleDateString('vi-VN');
     };
-    
+
     // Kiểm tra trạng thái đăng nhập
     const isLoggedIn = AccountService.isLoggedIn();
     const isAdmin = AccountService.isAdmin();
@@ -467,36 +468,36 @@ const PageVBAFunctionManager = () => {
             <div className="manager-header">
                 <h2>Quản lý VBA Functions</h2>
                 <div className="header-actions">
-                    <button 
-                        className="btn btn-primary" 
+                    <button
+                        className="btn btn-primary"
                         onClick={handleAddFunction}
                         disabled={!isLoggedIn}
                     >
                         <span className="btn-icon">+</span> Thêm mới
                     </button>
-                    <button 
-                        className="btn btn-secondary" 
+                    <button
+                        className="btn btn-secondary"
                         onClick={loadFunctions}
                     >
                         <span className="btn-icon">↻</span> Làm mới
                     </button>
                 </div>
             </div>
-            
+
             {/* Notification */}
             {notification.show && (
                 <div className={`notification notification-${notification.type}`}>
                     {notification.message}
                 </div>
             )}
-            
+
             {/* Main Content - Split 3/7 */}
             <div className="manager-content">
                 {/* Left Panel - 30% */}
                 <div className="VBAFunctionManager-left-panel">
                     <div className="panel-header">
                         <h3>Danh sách Functions ({filteredFunctions.length})</h3>
-                        
+
                         {/* Search and Filters */}
                         <div className="filter-controls">
                             <div className="search-box">
@@ -509,10 +510,10 @@ const PageVBAFunctionManager = () => {
                                 />
                                 <span className="search-icon">🔍</span>
                             </div>
-                            
+
                             <div className="filter-group">
-                                <select 
-                                    value={filterType} 
+                                <select
+                                    value={filterType}
                                     onChange={(e) => setFilterType(e.target.value)}
                                     className="filter-select"
                                 >
@@ -522,7 +523,7 @@ const PageVBAFunctionManager = () => {
                                     <option value="3">PowerPoint</option>
                                     <option value="4">Other</option>
                                 </select>
-                                
+
                                 <label className="checkbox-label">
                                     <input
                                         type="checkbox"
@@ -534,7 +535,7 @@ const PageVBAFunctionManager = () => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Functions List */}
                     <div className="functions-list">
                         {loading ? (
@@ -542,18 +543,18 @@ const PageVBAFunctionManager = () => {
                         ) : filteredFunctions.length === 0 ? (
                             <div className="empty-message">
                                 {searchTerm ? 'Không tìm thấy function nào' : 'Chưa có function nào'}
-                                {!isLoggedIn && <div><br/>Vui lòng đăng nhập để xem functions của bạn</div>}
+                                {!isLoggedIn && <div><br />Vui lòng đăng nhập để xem functions của bạn</div>}
                             </div>
                         ) : (
                             <div className="function-items">
                                 {filteredFunctions.map(func => (
-                                    <div 
+                                    <div
                                         key={func.id}
                                         className={`function-item ${selectedFunction?.id === func.id ? 'selected' : ''} ${func.delete_flag ? 'deleted' : ''}`}
                                         onClick={() => handleSelectFunction(func)}
                                     >
                                         <div className="function-item-header">
-                                            <span 
+                                            <span
                                                 className="function-id"
                                                 style={{ backgroundColor: getTypeColor(func.type) }}
                                             >
@@ -580,7 +581,7 @@ const PageVBAFunctionManager = () => {
                         )}
                     </div>
                 </div>
-                
+
                 {/* Right Panel - 70% */}
                 <div className="vbaFunctionManager-right-panel">
                     {selectedFunction ? (
@@ -589,24 +590,24 @@ const PageVBAFunctionManager = () => {
                                 <h3>Chi tiết Function</h3>
                                 <div className="detail-actions">
 
-                                    <button 
-                                        className="btn btn-edit" 
+                                    <button
+                                        className="btn btn-edit"
                                         onClick={handleEditFunction}
                                     >
                                         ✏️ Chỉnh sửa
                                     </button>
 
                                     {selectedFunction.delete_flag ? (
-                                        <button 
-                                            className="btn btn-restore" 
+                                        <button
+                                            className="btn btn-restore"
                                             onClick={handleRestoreFunction}
                                             disabled={!isAdmin && selectedFunction.creater !== AccountService.getUserId()?.toString()}
                                         >
                                             ↩️ Khôi phục
                                         </button>
                                     ) : (
-                                        <button 
-                                            className="btn btn-delete" 
+                                        <button
+                                            className="btn btn-delete"
                                             onClick={handleDeleteFunction}
                                             disabled={!isAdmin && selectedFunction.creater !== AccountService.getUserId()?.toString()}
                                         >
@@ -615,7 +616,7 @@ const PageVBAFunctionManager = () => {
                                     )}
                                 </div>
                             </div>
-                            
+
                             <div className="detail-content">
                                 {/* Basic Info */}
                                 <div className="info-section">
@@ -623,7 +624,7 @@ const PageVBAFunctionManager = () => {
                                     <div className="info-grid">
                                         <div className="info-item">
                                             <label>Display ID:</label>
-                                            <span 
+                                            <span
                                                 className="display-id"
                                                 style={{ backgroundColor: getTypeColor(selectedFunction.type) }}
                                             >
@@ -640,9 +641,9 @@ const PageVBAFunctionManager = () => {
                                         </div>
                                         <div className="info-item">
                                             <label>Loại:</label>
-                                            <span 
+                                            <span
                                                 className="type-badge"
-                                                style={{ 
+                                                style={{
                                                     backgroundColor: getTypeColor(selectedFunction.type),
                                                     color: 'white'
                                                 }}
@@ -663,7 +664,7 @@ const PageVBAFunctionManager = () => {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Stats */}
                                 <div className="info-section">
                                     <h4>Thống kê</h4>
@@ -686,7 +687,7 @@ const PageVBAFunctionManager = () => {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Content */}
                                 <div className="info-section">
                                     <h4>Nội dung Code</h4>
@@ -694,7 +695,7 @@ const PageVBAFunctionManager = () => {
                                         <pre>{selectedFunction.content}</pre>
                                     </div>
                                 </div>
-                                
+
                                 {/* Comment */}
                                 {selectedFunction.comment && (
                                     <div className="info-section">
@@ -712,8 +713,8 @@ const PageVBAFunctionManager = () => {
                                 <div className="no-selection-icon">📁</div>
                                 <h3>Chưa chọn function</h3>
                                 <p>Vui lòng chọn một function từ danh sách bên trái để xem chi tiết</p>
-                                <button 
-                                    className="btn btn-primary" 
+                                <button
+                                    className="btn btn-primary"
                                     onClick={handleAddFunction}
                                     disabled={!isLoggedIn}
                                 >
@@ -721,7 +722,7 @@ const PageVBAFunctionManager = () => {
                                 </button>
                                 {!isLoggedIn && (
                                     <p className="login-prompt">
-                                        <br/>
+                                        <br />
                                         <small>Bạn cần đăng nhập để tạo và quản lý functions</small>
                                     </p>
                                 )}
@@ -730,39 +731,39 @@ const PageVBAFunctionManager = () => {
                     )}
                 </div>
             </div>
-            
+
             {/* Dialog Form */}
             {showDialog && (
                 <div className="dialog-overlay">
                     <div className="dialog">
                         <div className="dialog-header">
                             <h3>{dialogMode === 'add' ? 'Thêm Function mới' : 'Chỉnh sửa Function'}</h3>
-                            <button 
-                                className="btn-close" 
+                            <button
+                                className="btn-close"
                                 onClick={() => setShowDialog(false)}
                             >
                                 ×
                             </button>
                         </div>
-                        
+
                         <div className="dialog-content">
                             <div className="form-group">
                                 <label>Tiêu đề *</label>
                                 <input
                                     type="text"
                                     value={formData.title}
-                                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Nhập tiêu đề function (tối đa 50 ký tự)"
                                     maxLength="50"
                                     className="form-input"
                                 />
                             </div>
-                            
+
                             <div className="form-group">
                                 <label>Loại *</label>
                                 <select
                                     value={formData.type}
-                                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                     className="form-select"
                                 >
                                     <option value="1">Excel</option>
@@ -771,39 +772,39 @@ const PageVBAFunctionManager = () => {
                                     <option value="4">Other</option>
                                 </select>
                             </div>
-                            
+
                             <div className="form-group">
                                 <label>Nội dung Code *</label>
                                 <textarea
                                     value={formData.content}
-                                    onChange={(e) => setFormData({...formData, content: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                     placeholder="Nhập code VBA..."
                                     rows="10"
                                     className="form-textarea"
                                 />
                             </div>
-                            
+
                             <div className="form-group">
                                 <label>Ghi chú</label>
                                 <textarea
                                     value={formData.comment}
-                                    onChange={(e) => setFormData({...formData, comment: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                                     placeholder="Nhập ghi chú (không bắt buộc)..."
                                     rows="3"
                                     className="form-textarea"
                                 />
                             </div>
                         </div>
-                        
+
                         <div className="dialog-footer">
-                            <button 
-                                className="btn btn-secondary" 
+                            <button
+                                className="btn btn-secondary"
                                 onClick={() => setShowDialog(false)}
                             >
                                 Hủy
                             </button>
-                            <button 
-                                className="btn btn-primary" 
+                            <button
+                                className="btn btn-primary"
                                 onClick={handleSaveForm}
                             >
                                 {dialogMode === 'add' ? 'Tạo mới' : 'Cập nhật'}
