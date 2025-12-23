@@ -40,8 +40,8 @@ const TopPanel = () => {
             Giới thiệu
           </button>
           <button className="nav-button" onClick={handleShowVBAFunctionView}>
-            <span className="nav-icon">🔧</span>
-            Dịch vụ
+            <span className="nav-icon">💻</span>
+            Danh sách Function
           </button>
           <button className="cta-button">
             Đăng ký học

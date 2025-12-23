@@ -251,8 +251,8 @@ const LeftPanel = () => {
                 )}
               </a>
             </li>
-            <li><a href="#" onClick={handleOpenTELEXApp}>TELEX APP</a></li>
-            <li><a href="#" onClick={handleShowVBAFunctionManager}>Quản lý bài viết</a></li>
+            <li><a href="#" onClick={handleOpenTELEXApp}>💬 TELEX APP</a></li>
+            <li><a href="#" onClick={handleShowVBAFunctionManager}>📄 Quản lý bài viết</a></li>
             
             {AccountService.isAdmin() && (
               <li><a href="/admin">👑 Quản trị hệ thống</a></li>
