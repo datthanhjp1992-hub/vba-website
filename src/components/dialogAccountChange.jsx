@@ -18,7 +18,7 @@ import {
 } from '../services/constants';
 
 const DialogAccountChange = ({ userId, onBack, onUpdateSuccess }) => {
-    const { currentUser, updateUser } = useAuth();
+    const {currentUser, updateUser } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         password: '',

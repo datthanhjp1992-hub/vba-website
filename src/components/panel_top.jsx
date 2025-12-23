@@ -14,6 +14,10 @@ const TopPanel = () => {
     setIsMenuOpen(false);
   };
 
+  const handleShowVBAFunctionView =()=>{
+    window.showPageVBAFunctionView();
+    setIsMenuOpen(false);
+  }
   return (
     <header className="top-panel">
       <div className="container">
@@ -35,7 +39,7 @@ const TopPanel = () => {
             <span className="nav-icon">👤</span>
             Giới thiệu
           </button>
-          <button className="nav-button">
+          <button className="nav-button" onClick={handleShowVBAFunctionView}>
             <span className="nav-icon">🔧</span>
             Dịch vụ
           </button>
@@ -66,7 +70,7 @@ const TopPanel = () => {
             </button>
             <button className="mobile-nav-item">
               <span className="mobile-nav-icon">🔧</span>
-              Dịch vụ
+              Code tham khảo
             </button>
             <button className="mobile-cta">
               Đăng ký học ngay
