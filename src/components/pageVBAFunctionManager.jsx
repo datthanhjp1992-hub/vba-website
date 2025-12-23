@@ -67,18 +67,18 @@ const PageVBAFunctionManager = () => {
         }
     };
 
-    // Load functions từ API
+    // version2.0
     const loadFunctions = async () => {
         try {
             setLoading(true);
             const user = AccountService.getCurrentUser();
-
+    
             if (!user || !user.index) {
                 showNotification('Vui lòng đăng nhập để quản lý functions', 'warning');
                 setLoading(false);
                 return;
             }
-
+    
             // Kiểm tra kết nối trước khi load
             const connection = await ConnectionService.quickCheck();
             if (!connection.connected) {
@@ -86,14 +86,27 @@ const PageVBAFunctionManager = () => {
                 setLoading(false);
                 return;
             }
-
+    
             // Xây dựng URL với API endpoint
             const baseUrl = SERVER_CONFIG.BASE_URL;
             const params = new URLSearchParams();
+            
+            // Thêm các tham số filter
             if (showDeleted) params.append('show_deleted', 'true');
-
-            const url = `${baseUrl}api/vba-functions${params.toString() ? '?' + params.toString() : ''}`;
-
+            
+            // Nếu user không phải admin, filter theo user_id
+            const isAdmin = AccountService.isAdmin();
+            let url;
+            
+            if (isAdmin) {
+                // Admin: lấy tất cả functions không filter theo user
+                url = `${baseUrl}api/vba-functions${params.toString() ? '?' + params.toString() : ''}`;
+            } else {
+                // User thường: chỉ lấy functions của chính mình
+                const userId = user.index;
+                url = `${baseUrl}api/vba-functions/${userId}${params.toString() ? '?' + params.toString() : ''}`;
+            }
+    
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -101,29 +114,23 @@ const PageVBAFunctionManager = () => {
                     'Accept': 'application/json'
                 }
             });
-
+    
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${ERROR_MESSAGES.SERVER_ERROR}`);
             }
-
+    
             const data = await response.json();
-
+    
             if (data.success) {
-                // Filter chỉ lấy functions của user hiện tại (trừ admin)
-                let userFunctions = data.data || [];
-                const isAdmin = AccountService.isAdmin();
-
-                if (!isAdmin) {
-                    userFunctions = userFunctions.filter(func =>
-                        func.creater === user.index.toString()
-                    );
+                // Không cần filter ở frontend nữa vì backend đã filter
+                setFunctions(data.data || []);
+    
+                if (data.data && data.data.length > 0 && !selectedFunction) {
+                    setSelectedFunction(data.data[0]);
                 }
-
-                setFunctions(userFunctions);
-
-                if (userFunctions.length > 0 && !selectedFunction) {
-                    setSelectedFunction(userFunctions[0]);
-                }
+                
+                // Debug log để kiểm tra
+                console.log(`Loaded ${data.data?.length || 0} functions for ${isAdmin ? 'admin' : 'user'} ${user.index}`);
             } else {
                 throw new Error(data.error || ERROR_MESSAGES.SERVER_ERROR);
             }
