@@ -139,13 +139,8 @@ class VBADownloadService {
         // Sử dụng VBAFunctionService để lấy type name
         const typeName = VBAFunctionService.getFunctionTypeName(func.type);
         const id = func.id || '0000';
-        const title = (func.title || 'Untitled')
-            .replace(/[^a-z0-9]/gi, '_')
-            .replace(/_+/g, '_')
-            .replace(/^_|_$/g, '')
-            .substring(0, 50);
-        
-        return `VBA_${typeName}_${id}_${title}.bas`;
+
+        return `VBA_${typeName}_${id}.bas`;
     }
     
     /**
