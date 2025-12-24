@@ -532,12 +532,17 @@ class VBAFunctionService {
      */
     static async searchFunctions(searchTerm, options = {}) {
         try {
-            const url = `${getApiUrl('/api/vba-functions/search')}?q=${encodeURIComponent(searchTerm)}`;
+            // Xây dựng query params
+            const params = new URLSearchParams({
+                q: searchTerm
+            });
             
             if (options.type) {
-                url += `&type=${options.type}`;
+                params.append('type', options.type);
             }
-
+            
+            const url = `${getApiUrl('/api/vba-functions/search')}?${params.toString()}`;
+            
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
