@@ -86,7 +86,7 @@ class LikeService {
     // Toggle like status
     static async toggleLike(userID, functID) {
     const url = `${getApiUrl(API_ENDPOINTS.LIKESERVICE.TOOGLE_LIKE_STATUS)}/${userID}/${functID}`;
-    console.log("Calling toggle like API:", url);
+    //console.log("Calling toggle like API:", url);
     
     try {
         const response = await fetch(url, {
@@ -154,6 +154,67 @@ class LikeService {
             has_like: false
         };
     }
+    }
+
+    // Get totals like
+    static async getTotalLike(functID){
+        const url = `${getApiUrl(API_ENDPOINTS.LIKESERVICE.FUNCTION_LIKE_TOTAL)}/${functID}`;
+        try{
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+            // Kiểm tra status HTTP trước
+            if (!response.ok) {
+                console.error('Request Failed!');
+                return {
+                    success: false,
+                    error: 'Request Failed',
+                    count: 0
+                };
+            } else {
+
+                const data = await response.json();
+                console.log(data);
+                return {
+                    success: data.success,
+                    error: '',
+                    count: data.count || 0,
+                    data: data.data || []
+                };
+            }
+            
+
+        }catch (error) {
+            console.error('Get total like error:', error);
+            
+            if (error.name === 'TimeoutError') {
+                return {
+                    success: false,
+                    error: 'Request timeout. Vui lòng thử lại sau.',
+                    has_like: false
+                };
+            }
+            
+            if (error.name === 'AbortError') {
+                return {
+                    success: false,
+                    error: 'Request was aborted.',
+                    has_like: false
+                };
+            }
+            
+            return {
+                success: false,
+                error: error.message || 'Network error occurred',
+                has_like: false
+            };
+        }
     }
 }
 

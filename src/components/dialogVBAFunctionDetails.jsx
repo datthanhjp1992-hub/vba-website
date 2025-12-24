@@ -149,17 +149,19 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
 
     const handleLikeToggle = async () => {
         if (!currentUser || !currentUser.index || isLiking) return;
-
+    
         setIsLiking(true);
         try {
             const response = await LikeService.toggleLike(currentUser.index, func.id);
             
             if (response.success) {
                 setHasLike(response.has_like);
-                await refreshFunctionInformation();
+                // Gọi hàm cập nhật tổng số like ngay lập tức
+                await updateTotalLikes();
             } else {
                 console.error("Toggle like failed:", response.error);
             }
+            
         } catch (error) {
             console.error("Error toggling like:", error);
         } finally {
@@ -248,6 +250,20 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         }
     }
 
+    const updateTotalLikes = async () => {
+        try {
+            const response = await LikeService.getTotalLike(func.id);
+            if (response.success) {
+                setFormData(prev => ({
+                    ...prev,
+                    like: response.count || '0'
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching total likes:', error);
+        }
+    };
+
     useEffect(() => {
         if (!func)  {
             console.log('Don\'t get any function');
@@ -300,6 +316,9 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         };
     
         checkUserLike();
+
+        // Load tổng số like lần đầu
+        updateTotalLikes();
     }, [func]);
 
     return (

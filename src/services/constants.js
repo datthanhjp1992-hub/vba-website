@@ -40,7 +40,8 @@ export const API_ENDPOINTS = {
 
     LIKESERVICE:{
         CHECK_LIKE:'likemaster/checklike',         // <int:user_id>/<int:function_id>
-        TOOGLE_LIKE_STATUS:'likemaster/change'    // <int:user_id>/<int:function_id>
+        TOOGLE_LIKE_STATUS:'likemaster/change',    // <int:user_id>/<int:function_id>
+        FUNCTION_LIKE_TOTAL:'likemaster/function'  //<int:function_id>
     }
 };
 
