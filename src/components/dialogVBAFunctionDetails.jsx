@@ -158,14 +158,10 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
 
         setIsLiking(true);
         try {
-            // Gọi API để toggle like status
             const response = await LikeService.toggleLike(currentUser.index, func.id);
             
             if (response.success) {
-                // Cập nhật trạng thái like
                 setHasLike(response.has_like);
-                
-                // Refresh thông tin function để cập nhật số lượng like
                 await refreshFunctionInformation();
             } else {
                 console.error("Toggle like failed:", response.error);
@@ -190,7 +186,6 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                 showNotification: false
             });
 
-            // Download VBA module
             const result = await VBADownloadService.downloadVBAModule(formData);
             
             if (result.success) {
@@ -200,12 +195,9 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                     showNotification: true
                 });
 
-                // Tăng download count trên server
                 await VBADownloadService.incrementDownloadCount(formData.id);
-
                 await refreshFunctionInformation();
 
-                // Ẩn thông báo sau 3 giây
                 setTimeout(() => {
                     setDownloadStatus(prev => ({
                         ...prev,
@@ -225,7 +217,6 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                 showNotification: true
             });
             
-            // Ẩn thông báo lỗi sau 3 giây
             setTimeout(() => {
                 setDownloadStatus(prev => ({
                     ...prev,
@@ -257,7 +248,6 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                 console.log(functID, " don't exist");
                 return;
             }
-            console.log(response.data);
             setFormData(response.data);
         } catch (error) {
             console.error('Error refreshing function information:', error);
@@ -274,7 +264,6 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         const user = AccountService.getCurrentUser();
         setCurrentUser(user);
 
-        // Hàm async để check like
         const checkUserLike = async () => {
             if (user && user.index) {
                 try {
@@ -323,98 +312,133 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
             </div>
 
             <div id="dialogVBAFunctionDetailsFormBody">
-                <div>
-                    <span>Function ID:</span>
-                    <span>{formData.id || 'N/A'}</span>
-                </div>
-
-                <div>
-                    <span>Type:</span>
-                    <span style={{ backgroundColor: getTypeColor(formData.type) }}>
-                        {getTypeName(formData.type)}
-                    </span>
-                </div>
-
-                <div>
-                    <span>Content:</span>
-                    <div className="content-wrapper">
-                        <div className="content-container">
-                            <button 
-                                className={`copy-button ${copyStatus.isCopied ? 'copied' : ''}`}
-                                onClick={copyToClipboard}
-                                title="Copy nội dung vào clipboard"
-                            >
-                                <span className="copy-icon">
-                                    {copyStatus.isCopied ? '✓' : '📋'}
-                                </span>
-                                <span className="copy-text">
-                                    {copyStatus.isCopied ? 'Đã copy!' : 'Copy code'}
-                                </span>
-                            </button>
-                            
-                            <pre className="content-text">
-                                {formData.content || 'No content available'}
-                            </pre>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <span>Comment:</span>
-                    <span>{formData.comment || 'No comment available'}</span>
-                </div>
-
-                <div className="like-container">
-                    <span className="like-label">Likes:</span>
-                    <div className="like-count">{formData.like || 0}
-                    <button 
-                        className={`like-button ${hasLike ? 'liked' : ''} ${!currentUser ? 'disabled' : ''}`}
-                        onClick={handleLikeToggle}
-                        title={!currentUser ? "Vui lòng đăng nhập để like" : (hasLike ? "Bỏ like" : "Like")}
-                        disabled={!currentUser || isLiking}
-                    >
-                        <span className="like-icon">
-                            {hasLike ? '👍' : '👍'}
+                {/* Dòng 1: Function ID, Author, Type */}
+                <div className="detail-row row-1">
+                    <div className="detail-item function-id-item">
+                        <span className="detail-item-label">Function ID</span>
+                        <span className="detail-item-value function-id-value">
+                            {formData.id || 'N/A'}
                         </span>
-                    </button>
+                    </div>
+
+                    <div className="detail-item author-item">
+                        <span className="detail-item-label">Author</span>
+                        <span className="detail-item-value author-value">
+                            {formatCreatorName(formData.creater, formData.creater_name)}
+                        </span>
+                    </div>
+
+                    <div className="detail-item type-item">
+                        <span className="detail-item-label">Type</span>
+                        <span className="detail-item-value">
+                            <span 
+                                className="type-badge"
+                                style={{ backgroundColor: getTypeColor(formData.type) }}
+                            >
+                                {getTypeName(formData.type)}
+                            </span>
+                        </span>
                     </div>
                 </div>
 
-                <div>
-                    <span>Downloads:</span>
-                    <div className="download-count-container">
-                        <span className="download-count">{formData.download || 0}</span>
-                        <div className="download-button-container">
+                {/* Dòng 2: Content */}
+                <div className="detail-row row-2">
+                    <div className="detail-item content-item">
+                        <span className="detail-item-label">Content</span>
+                        <div className="content-wrapper">
+                            <div className="content-container">
+                                <button 
+                                    className={`copy-button ${copyStatus.isCopied ? 'copied' : ''}`}
+                                    onClick={copyToClipboard}
+                                    title="Copy nội dung vào clipboard"
+                                >
+                                    <span className="copy-icon">
+                                        {copyStatus.isCopied ? '✓' : '📋'}
+                                    </span>
+                                    <span className="copy-text">
+                                        {copyStatus.isCopied ? 'Đã copy!' : 'Copy code'}
+                                    </span>
+                                </button>
+                                
+                                <pre className="content-text">
+                                    {formData.content || 'No content available'}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dòng 3: Comment */}
+                <div className="detail-row row-3">
+                    <div className="detail-item comment-item">
+                        <span className="detail-item-label">Comment</span>
+                        <div className="detail-item-value comment-value">
+                            {formData.comment || 'No comment available'}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dòng 4: Download và Like */}
+                <div className="detail-row row-4">
+                    <div className="detail-item download-item">
+                        <span className="detail-item-label">Downloads</span>
+                        <div className="download-container">
+                            <span className="download-count">
+                                {formData.download || 0}
+                            </span>
+                            <div className="download-button-container">
+                                <button 
+                                    className={`download-button ${downloadStatus.isDownloading ? 'downloading' : ''}`}
+                                    onClick={handleDownload}
+                                    title="Download VBA module"
+                                    disabled={downloadStatus.isDownloading}
+                                >
+                                    <span className="download-icon">
+                                        {downloadStatus.isDownloading ? '⏳' : '⬇️'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="detail-item like-item">
+                        <span className="detail-item-label">Likes</span>
+                        <div className="like-container">
+                            <span className="like-count">
+                                {formData.like || 0}
+                            </span>
                             <button 
-                                className={`download-button ${downloadStatus.isDownloading ? 'downloading' : ''}`}
-                                onClick={handleDownload}
-                                title="Download VBA module"
-                                disabled={downloadStatus.isDownloading}
+                                className={`like-button ${hasLike ? 'liked' : ''} ${!currentUser ? 'disabled' : ''}`}
+                                onClick={handleLikeToggle}
+                                title={!currentUser ? "Vui lòng đăng nhập để like" : (hasLike ? "Bỏ like" : "Like")}
+                                disabled={!currentUser || isLiking}
                             >
-                                <span className="download-icon">
-                                    {downloadStatus.isDownloading ? '⏳' : '⬇️'}
+                                <span className="like-icon">
+                                    {hasLike ? '👍' : '👍'}
                                 </span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <span>Created Date:</span>
-                    <span>{formatDate(formData.created_at)}</span>
-                </div>
-
-                <div>
-                    <span>Author:</span>
-                    <span>{formatCreatorName(formData.creater, formData.creater_name)}</span>
-                </div>
-
-                {formData.updated_at && formData.updated_at !== formData.created_at && (
-                    <div style={{ gridColumn: 'span 2' }}>
-                        <span>Last Updated:</span>
-                        <span>{formatDate(formData.updated_at)}</span>
+                {/* Dòng 5: Create Date và Last Update */}
+                <div className="detail-row row-5">
+                    <div className="detail-item create-date-item">
+                        <span className="detail-item-label">Created Date</span>
+                        <span className="detail-item-value create-date-value">
+                            {formatDate(formData.created_at)}
+                        </span>
                     </div>
-                )}
+
+                    {formData.updated_at && formData.updated_at !== formData.created_at && (
+                        <div className="detail-item last-update-item">
+                            <span className="detail-item-label">Last Updated</span>
+                            <span className="detail-item-value last-update-value">
+                                {formatDate(formData.updated_at)}
+                            </span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="dialog-footer">

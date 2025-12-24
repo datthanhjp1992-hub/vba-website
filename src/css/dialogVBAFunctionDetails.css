@@ -5,7 +5,7 @@
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     overflow: hidden;
-    max-width: 800px;
+    max-width: 900px;
     margin: 20px auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
@@ -43,57 +43,150 @@
 
 #dialogVBAFunctionDetailsFormBody {
     padding: 32px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 24px;
     flex: 1;
 }
 
-#dialogVBAFunctionDetailsFormBody > div {
+/* Row container cho các dòng */
+.detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Dòng 1: Function ID, Author, Type */
+.row-1 {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.row-1 > div {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Dòng 2: Content */
+.row-2 {
+    grid-column: span 1;
+}
+
+/* Dòng 3: Comment */
+.row-3 {
+    grid-column: span 1;
+}
+
+/* Dòng 4: Download và Like */
+.row-4 {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.row-4 > div {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Dòng 5: Create Date và Last Update */
+.row-5 {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.row-5 > div {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Style chung cho các item */
+.detail-item {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 16px;
+    padding: 20px;
     background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: 10px;
     border-left: 4px solid #3498db;
     transition: all 0.2s ease;
     position: relative;
+    flex: 1;
+    min-height: 90px;
+    justify-content: center;
 }
 
-#dialogVBAFunctionDetailsFormBody > div:hover {
+.detail-item:hover {
     background: #eef5ff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
 }
 
-#dialogVBAFunctionDetailsFormBody > div:nth-child(5),
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6),
-#dialogVBAFunctionDetailsFormBody > div:nth-child(7),
-#dialogVBAFunctionDetailsFormBody > div:nth-child(8) {
-    grid-column: span 1;
-}
-
-#dialogVBAFunctionDetailsFormBody span:first-child {
+.detail-item-label {
     font-size: 13px;
     color: #6c757d;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
-#dialogVBAFunctionDetailsFormBody span:last-child {
+.detail-item-value {
     font-size: 16px;
     color: #2c3e50;
     font-weight: 500;
     line-height: 1.5;
     word-break: break-word;
+    flex: 1;
 }
 
-/* Style cho Type */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(2) span:last-child {
+/* Style riêng cho từng loại item */
+
+/* Function ID */
+.function-id-item {
+    border-left-color: #e74c3c;
+}
+
+.function-id-value {
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e74c3c;
+    background: #fdeaea;
+    padding: 8px 16px;
+    border-radius: 8px;
     display: inline-block;
-    padding: 6px 16px;
+    width: fit-content;
+}
+
+/* Author */
+.author-item {
+    border-left-color: #2ecc71;
+}
+
+.author-value {
+    font-weight: 600;
+    color: #27ae60;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.author-value::before {
+    content: "👤";
+}
+
+/* Type */
+.type-item {
+    border-left-color: #3498db;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 8px 20px;
     border-radius: 20px;
     color: white !important;
     font-weight: 700 !important;
@@ -101,51 +194,41 @@
     text-align: center;
     min-width: 120px;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-/* Style cho ID */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(1) span:last-child {
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
-    font-weight: 700;
-    color: #e74c3c;
-    background: #fdeaea;
-    padding: 6px 12px;
-    border-radius: 6px;
-    display: inline-block;
-    width: fit-content;
-}
-
-/* Style cho Content */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(3) {
-    grid-column: span 2;
-    position: relative;
+/* Content */
+.content-item {
+    min-height: 200px;
+    border-left-color: #9b59b6;
 }
 
 .content-wrapper {
     position: relative;
     width: 100%;
+    height: 100%;
 }
 
 .content-container {
     position: relative;
+    height: 100%;
 }
 
 .copy-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     background: #3498db;
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 12px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     transition: all 0.2s ease;
     z-index: 10;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
@@ -153,7 +236,7 @@
 
 .copy-button:hover {
     background: #2980b9;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
@@ -172,27 +255,20 @@
     box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
 }
 
-.copy-icon {
-    font-size: 14px;
-}
-
-.copy-text {
-    white-space: nowrap;
-}
-
 .content-text {
     white-space: pre-wrap;
     background: #f1f8ff;
-    padding: 16px;
+    padding: 20px;
     border-radius: 8px;
     border: 1px solid #d1e7ff;
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 14px;
     line-height: 1.6;
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
-    margin-top: 40px;
-    min-height: 100px;
+    margin-top: 50px;
+    min-height: 150px;
+    width: 100%;
 }
 
 .content-text::-webkit-scrollbar {
@@ -213,35 +289,47 @@
     background: #a8a8a8;
 }
 
-/* Style cho Comment */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(4) span:last-child {
+/* Comment */
+.comment-item {
+    min-height: 120px;
+    border-left-color: #f39c12;
+}
+
+.comment-value {
     white-space: pre-wrap;
     background: #fff9e6;
-    padding: 16px;
+    padding: 20px;
     border-radius: 8px;
     border: 1px solid #ffeaa7;
     font-style: italic;
     line-height: 1.6;
+    min-height: 80px;
+    width: 100%;
 }
 
-/* Style cho Like container */
-.like-container {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+/* Like và Download container */
+.like-item, .download-item {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.like-item {
     border-left-color: #ff6b6b;
+}
+
+.download-item {
+    border-left-color: #28a745;
+}
+
+/* Like container */
+.like-container {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px;
     justify-content: space-between;
-}
-
-.like-label {
-    font-size: 13px;
-    color: #6c757d;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+    gap: 20px;
+    width: 100%;
 }
 
 .like-count-container {
@@ -250,14 +338,23 @@
     gap: 16px;
 }
 
-/* Nút Like */
+.like-count {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 60px;
+}
+
 .like-button {
     background: white;
     color: #6c757d;
     border: 2px solid #dee2e6;
-    border-radius: 8px;
-    width: 44px;
-    height: 44px;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -267,7 +364,6 @@
     padding: 0;
     position: relative;
     flex-shrink: 0;
-    margin-left: auto; /* Đẩy nút like sang bên phải */
 }
 
 .like-button:hover:not(:disabled) {
@@ -304,12 +400,8 @@
     box-shadow: none;
 }
 
-.like-button:disabled .like-icon {
-    opacity: 0.5;
-}
-
 .like-button .like-icon {
-    font-size: 24px;
+    font-size: 26px;
     line-height: 1;
     transition: transform 0.2s ease;
 }
@@ -328,54 +420,39 @@
     100% { transform: scale(1); }
 }
 
-/* Like count */
-.like-count {
-    font-size: 24px;
-    font-weight: 700;
-    color: #e74c3c;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-/* Style cho Download */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-left-color: #28a745;
-}
-
-.download-count-container {
+/* Download container */
+.download-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 20px;
+    width: 100%;
 }
 
 .download-count {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #28a745;
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 60px;
 }
 
-/* Download button */
 .download-button {
     background: #28a745;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 10px;
+    padding: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     position: relative;
     flex-shrink: 0;
 }
@@ -413,13 +490,35 @@
 }
 
 .download-button .download-icon {
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
+}
+
+/* Date items */
+.create-date-item, .last-update-item {
+    border-left-color: #6c757d;
+}
+
+.create-date-value, .last-update-value {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.create-date-value::before {
+    content: "📅";
+}
+
+.last-update-value::before {
+    content: "🔄";
 }
 
 /* Tooltip cho buttons */
 .like-button:hover::after,
-.download-button:hover::after {
+.download-button:hover::after,
+.copy-button:hover::after {
     content: attr(title);
     position: absolute;
     bottom: calc(100% + 10px);
@@ -438,7 +537,8 @@
 }
 
 .like-button:hover::before,
-.download-button:hover::before {
+.download-button:hover::before,
+.copy-button:hover::before {
     content: "";
     position: absolute;
     bottom: calc(100% + 4px);
@@ -461,29 +561,6 @@
     }
 }
 
-/* Style cho ngày tháng */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(7),
-#dialogVBAFunctionDetailsFormBody > div:nth-child(8) {
-    border-left-color: #2ecc71;
-}
-
-#dialogVBAFunctionDetailsFormBody > div:nth-child(7) span:last-child,
-#dialogVBAFunctionDetailsFormBody > div:nth-child(8) span:last-child {
-    font-weight: 600;
-    color: #27ae60;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-#dialogVBAFunctionDetailsFormBody > div:nth-child(7) span:last-child::before {
-    content: "📅";
-}
-
-#dialogVBAFunctionDetailsFormBody > div:nth-child(8) span:last-child::before {
-    content: "👤";
-}
-
 /* Footer với nút Back */
 .dialog-footer {
     padding: 20px 32px;
@@ -500,13 +577,13 @@
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 14px;
+    padding: 12px 28px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
@@ -523,7 +600,7 @@
 }
 
 .back-button .back-icon {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .back-button .back-text {
@@ -580,49 +657,64 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    #dialogVBAFunctionDetailsForm {
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    #dialogVBAFunctionDetailsFormHeader {
+        padding: 20px;
+    }
+    
+    #dialogVBAFunctionDetailsFormTitle span:last-child {
+        font-size: 22px;
+    }
+    
     #dialogVBAFunctionDetailsFormBody {
-        grid-template-columns: 1fr;
         padding: 20px;
         gap: 16px;
     }
     
-    #dialogVBAFunctionDetailsFormHeader {
-        padding: 20px 24px;
+    .detail-row {
+        flex-direction: column;
+        gap: 16px;
     }
     
-    #dialogVBAFunctionDetailsFormTitle span:last-child {
-        font-size: 24px;
+    .row-1, .row-4, .row-5 {
+        flex-direction: column;
     }
     
-    #dialogVBAFunctionDetailsFormBody > div:nth-child(3) {
-        grid-column: span 1;
+    .row-1 > div, .row-4 > div, .row-5 > div {
+        min-width: unset;
+    }
+    
+    .detail-item {
+        padding: 16px;
+        min-height: 80px;
     }
     
     .content-text {
-        max-height: 300px;
+        max-height: 250px;
         margin-top: 50px;
+        padding: 16px;
+        font-size: 13px;
+    }
+    
+    .comment-value {
+        padding: 16px;
     }
     
     .copy-button {
-        top: 5px;
-        right: 5px;
-        padding: 6px 12px;
-        font-size: 11px;
-    }
-    
-    .dialog-footer {
-        padding: 16px 20px;
-    }
-    
-    .back-button {
-        padding: 8px 20px;
-        font-size: 13px;
+        top: 8px;
+        right: 8px;
+        padding: 8px 16px;
+        font-size: 12px;
     }
     
     .like-button,
     .download-button {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
     }
     
     .like-button .like-icon {
@@ -630,11 +722,33 @@
     }
     
     .download-button .download-icon {
-        font-size: 18px;
+        font-size: 20px;
     }
     
     .like-count,
     .download-count {
-        font-size: 22px;
+        font-size: 24px;
+    }
+    
+    .function-id-value {
+        font-size: 18px;
+        padding: 6px 12px;
+    }
+    
+    .type-badge {
+        padding: 6px 16px;
+        font-size: 13px;
+        min-width: 100px;
+    }
+    
+    .dialog-footer {
+        padding: 16px 20px;
+    }
+    
+    .back-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%;
+        justify-content: center;
     }
 }
