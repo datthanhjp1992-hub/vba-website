@@ -36,6 +36,11 @@ export const API_ENDPOINTS = {
     USER: {
         PROFILE: '/user/profile',
         SETTINGS: '/user/settings',
+    },
+
+    LIKESERVICE:{
+        CHECK_LIKE:'likemaster/checklike',         // <int:user_id>/<int:function_id>
+        TOOGLE_LIKE_STATUS:'likemaster/change'    // <int:user_id>/<int:function_id>
     }
 };
 

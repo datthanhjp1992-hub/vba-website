@@ -224,31 +224,241 @@
     line-height: 1.6;
 }
 
-/* Style cho thống kê (Like, Download) */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(5),
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
+/* Style cho Like container */
+.like-container {
     background: linear-gradient(135deg, #f8f9fa, #e9ecef);
     border-left-color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    justify-content: space-between;
 }
 
-#dialogVBAFunctionDetailsFormBody > div:nth-child(5) span:last-child,
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child {
+.like-label {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.like-count-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Nút Like */
+.like-button {
+    background: white;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    position: relative;
+    flex-shrink: 0;
+    margin-left: auto; /* Đẩy nút like sang bên phải */
+}
+
+.like-button:hover:not(:disabled) {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #adb5bd;
+}
+
+.like-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.like-button.liked {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.like-button.liked:hover:not(:disabled) {
+    background: #2980b9;
+    border-color: #2980b9;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.like-button:disabled {
+    background: #f1f1f1;
+    color: #adb5bd;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+    transform: none;
+    box-shadow: none;
+}
+
+.like-button:disabled .like-icon {
+    opacity: 0.5;
+}
+
+.like-button .like-icon {
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.like-button:hover:not(:disabled) .like-icon {
+    transform: scale(1.1);
+}
+
+.like-button.liked .like-icon {
+    animation: likePop 0.3s ease;
+}
+
+@keyframes likePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Like count */
+.like-count {
     font-size: 24px;
     font-weight: 700;
     color: #e74c3c;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    white-space: nowrap;
 }
 
-#dialogVBAFunctionDetailsFormBody > div:nth-child(5) span:last-child::before {
-    content: "👍";
-    font-size: 20px;
+/* Style cho Download */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-left-color: #28a745;
 }
 
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child::before {
-    content: "⬇️";
+.download-count-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.download-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Download button */
+.download-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    width: 44px;
+    height: 44px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.download-button:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+}
+
+.download-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
+}
+
+.download-button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.download-button.downloading {
+    background: #ffc107;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.download-button .download-icon {
     font-size: 20px;
+    line-height: 1;
+}
+
+/* Tooltip cho buttons */
+.like-button:hover::after,
+.download-button:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+.like-button:hover::before,
+.download-button:hover::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 /* Style cho ngày tháng */
@@ -338,6 +548,16 @@
     gap: 8px;
 }
 
+.copy-notification.downloading {
+    background: #ffc107;
+    color: #333;
+}
+
+.copy-notification.downloaded {
+    background: #28a745;
+    color: white;
+}
+
 @keyframes slideIn {
     from {
         transform: translateX(100%);
@@ -398,159 +618,23 @@
         padding: 8px 20px;
         font-size: 13px;
     }
-}
-
-/* Download section layout */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-left-color: #ff6b6b;
-}
-
-/* Download count styling */
-#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child {
-    font-size: 24px;
-    font-weight: 700;
-    color: #e74c3c;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Download container */
-.download-count-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 16px;
-}
-
-/* Download button */
-.download-button {
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-    width: 44px;
-    height: 44px;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.download-button:hover:not(:disabled) {
-    background: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
-}
-
-.download-button:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
-}
-
-.download-button:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.6;
-    transform: none;
-}
-
-.download-button.downloading {
-    background: #ffc107;
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
-}
-
-.download-button .download-icon {
-    font-size: 20px;
-    line-height: 1;
-}
-
-/* Tooltip cho download button */
-.download-button:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    z-index: 1000;
-    pointer-events: none;
-    animation: tooltipFadeIn 0.2s ease;
-}
-
-.download-button:hover::before {
-    content: "";
-    position: absolute;
-    bottom: calc(100% + 4px);
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.85);
-    z-index: 1000;
-    animation: tooltipFadeIn 0.2s ease;
-}
-
-@keyframes tooltipFadeIn {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-/* Download notification */
-.copy-notification.downloading {
-    background: #ffc107;
-    color: #333;
-}
-
-.copy-notification.downloaded {
-    background: #28a745;
-    color: white;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+    
+    .like-button,
     .download-button {
         width: 40px;
         height: 40px;
-        padding: 8px;
+    }
+    
+    .like-button .like-icon {
+        font-size: 22px;
     }
     
     .download-button .download-icon {
         font-size: 18px;
     }
     
-    .download-count-container {
-        gap: 12px;
+    .like-count,
+    .download-count {
+        font-size: 22px;
     }
 }

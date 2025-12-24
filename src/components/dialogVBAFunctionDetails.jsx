@@ -1,7 +1,10 @@
+//[file name]: dialogVBAFunctionDetails.jsx
 import React, { useState, useEffect } from 'react';
 import '../css/dialogVBAFunctionDetails.css';
 import VBADownloadService from '../services/vbaDownloadService';
 import VBAFunctionService from '../services/vbaFunctionService';
+import AccountService from '../services/account_service';
+import LikeService from '../services/likeService';
 
 const DialogVBAFunctionDetails = ({ func, onBack }) => {
     const [formData, setFormData] = useState({
@@ -18,6 +21,9 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         creater_name: ''
     });
 
+    const [currentUser, setCurrentUser] = useState(null);
+    const [hasLike, setHasLike] = useState(false);
+    const [isLiking, setIsLiking] = useState(false);
     const [copyStatus, setCopyStatus] = useState({
         isCopied: false,
         showNotification: false
@@ -147,6 +153,30 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         }
     };
 
+    const handleLikeToggle = async () => {
+        if (!currentUser || !currentUser.index || isLiking) return;
+
+        setIsLiking(true);
+        try {
+            // Gọi API để toggle like status
+            const response = await LikeService.toggleLike(currentUser.index, func.id);
+            
+            if (response.success) {
+                // Cập nhật trạng thái like
+                setHasLike(response.has_like);
+                
+                // Refresh thông tin function để cập nhật số lượng like
+                await refreshFunctionInformation();
+            } else {
+                console.error("Toggle like failed:", response.error);
+            }
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        } finally {
+            setIsLiking(false);
+        }
+    };
+
     const handleDownload = async () => {
         if (!formData.content) {
             alert('Không có nội dung để download');
@@ -218,14 +248,13 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         }
     };
 
-
     const refreshFunctionInformation = async () => {
         try {
             let functID = func.id;
-            let response = await VBAFunctionService.getFunctionDetail(functID);  // ✅ Thêm await
+            let response = await VBAFunctionService.getFunctionDetail(functID);
             
             if (!response.success) {
-                console.log(functID, " dont existed");
+                console.log(functID, " don't exist");
                 return;
             }
             console.log(response.data);
@@ -241,6 +270,33 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
             return;
         }
         setFormData(func);
+    
+        const user = AccountService.getCurrentUser();
+        setCurrentUser(user);
+
+        // Hàm async để check like
+        const checkUserLike = async () => {
+            if (user && user.index) {
+                try {
+                    const response = await LikeService.getCheckLike(user.index, func.id);
+                    console.log("Response check like:", response);
+                    
+                    if (response.success) {
+                        setHasLike(response.has_like || false);
+                    } else {
+                        console.error("Check like failed:", response.error);
+                        setHasLike(false);
+                    }
+                } catch (error) {
+                    console.error("Error checking like:", error);
+                    setHasLike(false);
+                }
+            } else {
+                setHasLike(false);
+            }
+        };
+    
+        checkUserLike();
     }, [func]);
 
     return (
@@ -308,26 +364,37 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                     <span>{formData.comment || 'No comment available'}</span>
                 </div>
 
-                <div>
-                    <span>Likes:</span>
-                    <span>{formData.like || 0}</span>
+                <div className="like-container">
+                    <span className="like-label">Likes:</span>
+                    <div className="like-count">{formData.like || 0}
+                    <button 
+                        className={`like-button ${hasLike ? 'liked' : ''} ${!currentUser ? 'disabled' : ''}`}
+                        onClick={handleLikeToggle}
+                        title={!currentUser ? "Vui lòng đăng nhập để like" : (hasLike ? "Bỏ like" : "Like")}
+                        disabled={!currentUser || isLiking}
+                    >
+                        <span className="like-icon">
+                            {hasLike ? '👍' : '👍'}
+                        </span>
+                    </button>
+                    </div>
                 </div>
 
                 <div>
                     <span>Downloads:</span>
                     <div className="download-count-container">
-                        <span>{formData.download || 0}</span>
+                        <span className="download-count">{formData.download || 0}</span>
                         <div className="download-button-container">
-                        <button 
-                            className={`download-button ${downloadStatus.isDownloading ? 'downloading' : ''}`}
-                            onClick={handleDownload}
-                            title="Download VBA module"
-                            disabled={downloadStatus.isDownloading}
-                        >
-                            <span className="download-icon">
-                                {downloadStatus.isDownloading ? '⏳' : ''}
-                            </span>
-                        </button>
+                            <button 
+                                className={`download-button ${downloadStatus.isDownloading ? 'downloading' : ''}`}
+                                onClick={handleDownload}
+                                title="Download VBA module"
+                                disabled={downloadStatus.isDownloading}
+                            >
+                                <span className="download-icon">
+                                    {downloadStatus.isDownloading ? '⏳' : '⬇️'}
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
