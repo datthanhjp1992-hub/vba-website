@@ -246,14 +246,7 @@ const PageVBAFunctionView = () => {
 
     // Xử lý click vào function row
     const handleFunctionClick = (func) => {
-        // Lưu function data vào sessionStorage để trang khác có thể đọc
-        sessionStorage.setItem('selectedFunction', JSON.stringify(func));
-        
-        // Tạo URL cho trang chi tiết
-        const detailUrl = `/vba-function-details?id=${func.id}`;
-        
-        // Mở trong tab mới
-        window.open(detailUrl, '_blank');
+        window.showPageVBAFunctionDetails(func);
     };
 
     // Format ngày tháng đơn giản

@@ -15,13 +15,15 @@ import TelexVietnameseInput from './appTELEX';
 import PageContactInformation from './pageContactInformation';
 import PageVBAFunctionManager from './pageVBAFunctionManager';
 import PageVBAFunctionView from './pageVBAFunctionView';
+import DialogVBAFunctionDetails from './dialogVBAFunctionDetails';
 import HomePage from './pageHomePage';
 
 const CenterPanel = () => {
   const [currentView, setCurrentView] = useState('default');
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedFunction, setSelectedFunction] = useState(null);
   const [showAccountDetails, setShowAccountDetails] = useState(false);
-  const [showAccountChange, setShowAccountChange] = useState(false); // State mới
+  const [showAccountChange, setShowAccountChange] = useState(false);
 
   // Thiết lập các hàm global
   useEffect(() => {
@@ -57,10 +59,17 @@ const CenterPanel = () => {
       setCurrentView('pageVBAFunctionManager');
     }
 
-    // Hàm manager Code
+    // Hàm show function view
     window.showPageVBAFunctionView =() =>{
       console.log('Show Page VBA function view');
       setCurrentView('pageVBAFunctionView');
+    }
+
+    // Hàm show function details
+    window.showPageVBAFunctionDetails =(func) =>{
+      console.log('Show Page VBA Function Details, ID:', func.id);
+      setSelectedFunction(func); // ⭐ RẤT QUAN TRỌNG
+      setCurrentView('pageVBAFunctionDetails');
     }
 
     // Hàm để hiển thị thay đổi tài khoản
@@ -90,6 +99,7 @@ const CenterPanel = () => {
       delete window.showPageContactInformation;
       delete window.showPageVBAFunctionManager;
       delete window.showPageVBAFunctionView;
+      delete window.showPageVBAFunctionDetails;
     };
   }, []);
 
@@ -135,10 +145,12 @@ const CenterPanel = () => {
         return (
           <TelexVietnameseInput />
         );
+
       case 'pageVBAFunctionManager':
         return (
           <PageVBAFunctionManager />
         );
+
       case 'account-change':
         return (
           <DialogAccountChange
@@ -150,14 +162,22 @@ const CenterPanel = () => {
             onChangeSuccess={handleAccountChangeSuccess}
           />
         );
+
       case 'pageContactInformation':
         return (
           <PageContactInformation />
         );
+
       case 'pageVBAFunctionView':
         return (
           <PageVBAFunctionView />
         );
+      
+      case 'pageVBAFunctionDetails':
+        return (
+          <DialogVBAFunctionDetails func={selectedFunction} />
+        );
+
       default:
         return (
           <HomePage />

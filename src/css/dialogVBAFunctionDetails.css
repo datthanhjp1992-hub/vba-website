@@ -1,0 +1,556 @@
+/* [Filename]: dialogVBAFunctionDetails.css */
+
+#dialogVBAFunctionDetailsForm {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    max-width: 800px;
+    margin: 20px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+#dialogVBAFunctionDetailsFormHeader {
+    background: linear-gradient(135deg, #2c3e50, #4a6491);
+    color: white;
+    padding: 24px 32px;
+    border-bottom: 3px solid #3498db;
+}
+
+#dialogVBAFunctionDetailsFormTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#dialogVBAFunctionDetailsFormTitle span:first-child {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+#dialogVBAFunctionDetailsFormTitle span:last-child {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+#dialogVBAFunctionDetailsFormBody {
+    padding: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    flex: 1;
+}
+
+#dialogVBAFunctionDetailsFormBody > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:hover {
+    background: #eef5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(5),
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6),
+#dialogVBAFunctionDetailsFormBody > div:nth-child(7),
+#dialogVBAFunctionDetailsFormBody > div:nth-child(8) {
+    grid-column: span 1;
+}
+
+#dialogVBAFunctionDetailsFormBody span:first-child {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#dialogVBAFunctionDetailsFormBody span:last-child {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 500;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+/* Style cho Type */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(2) span:last-child {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    text-align: center;
+    min-width: 120px;
+    letter-spacing: 0.5px;
+}
+
+/* Style cho ID */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(1) span:last-child {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e74c3c;
+    background: #fdeaea;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    width: fit-content;
+}
+
+/* Style cho Content */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(3) {
+    grid-column: span 2;
+    position: relative;
+}
+
+.content-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.content-container {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.copy-button:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.copy-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(52, 152, 219, 0.3);
+}
+
+.copy-button.copied {
+    background: #2ecc71;
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+}
+
+.copy-button.copied:hover {
+    background: #27ae60;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+}
+
+.copy-icon {
+    font-size: 14px;
+}
+
+.copy-text {
+    white-space: nowrap;
+}
+
+.content-text {
+    white-space: pre-wrap;
+    background: #f1f8ff;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #d1e7ff;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 40px;
+    min-height: 100px;
+}
+
+.content-text::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-text::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.content-text::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.content-text::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Style cho Comment */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(4) span:last-child {
+    white-space: pre-wrap;
+    background: #fff9e6;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #ffeaa7;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Style cho thống kê (Like, Download) */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(5),
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-left-color: #ff6b6b;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(5) span:last-child,
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(5) span:last-child::before {
+    content: "👍";
+    font-size: 20px;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child::before {
+    content: "⬇️";
+    font-size: 20px;
+}
+
+/* Style cho ngày tháng */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(7),
+#dialogVBAFunctionDetailsFormBody > div:nth-child(8) {
+    border-left-color: #2ecc71;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(7) span:last-child,
+#dialogVBAFunctionDetailsFormBody > div:nth-child(8) span:last-child {
+    font-weight: 600;
+    color: #27ae60;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(7) span:last-child::before {
+    content: "📅";
+}
+
+#dialogVBAFunctionDetailsFormBody > div:nth-child(8) span:last-child::before {
+    content: "👤";
+}
+
+/* Footer với nút Back */
+.dialog-footer {
+    padding: 20px 32px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.back-button:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
+.back-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(108, 117, 125, 0.3);
+}
+
+.back-button .back-icon {
+    font-size: 16px;
+}
+
+.back-button .back-text {
+    white-space: nowrap;
+}
+
+/* Thông báo copy thành công */
+.copy-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2ecc71;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+    z-index: 1000;
+    animation: slideIn 0.3s ease, fadeOut 0.3s ease 1.7s forwards;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #dialogVBAFunctionDetailsFormBody {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 16px;
+    }
+    
+    #dialogVBAFunctionDetailsFormHeader {
+        padding: 20px 24px;
+    }
+    
+    #dialogVBAFunctionDetailsFormTitle span:last-child {
+        font-size: 24px;
+    }
+    
+    #dialogVBAFunctionDetailsFormBody > div:nth-child(3) {
+        grid-column: span 1;
+    }
+    
+    .content-text {
+        max-height: 300px;
+        margin-top: 50px;
+    }
+    
+    .copy-button {
+        top: 5px;
+        right: 5px;
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .dialog-footer {
+        padding: 16px 20px;
+    }
+    
+    .back-button {
+        padding: 8px 20px;
+        font-size: 13px;
+    }
+}
+
+/* Download section layout */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-left-color: #ff6b6b;
+}
+
+/* Download count styling */
+#dialogVBAFunctionDetailsFormBody > div:nth-child(6) span:last-child {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Download container */
+.download-count-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+}
+
+/* Download button */
+.download-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    width: 44px;
+    height: 44px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.download-button:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+}
+
+.download-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
+}
+
+.download-button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.download-button.downloading {
+    background: #ffc107;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.download-button .download-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Tooltip cho download button */
+.download-button:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+.download-button:hover::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Download notification */
+.copy-notification.downloading {
+    background: #ffc107;
+    color: #333;
+}
+
+.copy-notification.downloaded {
+    background: #28a745;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .download-button {
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+    }
+    
+    .download-button .download-icon {
+        font-size: 18px;
+    }
+    
+    .download-count-container {
+        gap: 12px;
+    }
+}

@@ -80,7 +80,7 @@ class VBAFunctionService {
                 throw new Error('Function ID là bắt buộc');
             }
 
-            const url = getApiUrl(`/api/vba-functions/${functionId}`);
+            const url = getApiUrl(`/api/vba-functions/getFunction/${functionId}`);
 
             const response = await fetch(url, {
                 method: 'GET',
