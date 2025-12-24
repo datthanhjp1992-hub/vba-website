@@ -73,12 +73,6 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
         }
     };
 
-    const formatCreatorName = (creater, creater_name) => {
-        if (creater_name) return creater_name;
-        if (creater) return `User ${creater}`;
-        return 'Unknown';
-    };
-
     const copyToClipboard = async () => {
         if (!formData.content) {
             console.log('No content to copy');
@@ -259,11 +253,31 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
             console.log('Don\'t get any function');
             return;
         }
+        
         setFormData(func);
-    
+        
+        // Fetch author name if not available
+        const fetchAuthorInfo = async () => {
+            if (func.creater && !func.creater_name) {
+                try {
+                    const authorResponse = await AccountService.getAccountDetail(func.creater);
+                    if (authorResponse.success) {
+                        setFormData(prev => ({
+                            ...prev,
+                            creater_name: authorResponse.data.username || 'Unknown'
+                        }));
+                    }
+                } catch (error) {
+                    console.error('Error fetching author info:', error);
+                }
+            }
+        };
+        
+        fetchAuthorInfo();
+        
         const user = AccountService.getCurrentUser();
         setCurrentUser(user);
-
+        
         const checkUserLike = async () => {
             if (user && user.index) {
                 try {
@@ -324,7 +338,7 @@ const DialogVBAFunctionDetails = ({ func, onBack }) => {
                     <div className="detail-item author-item">
                         <span className="detail-item-label">Author</span>
                         <span className="detail-item-value author-value">
-                            {formatCreatorName(formData.creater, formData.creater_name)}
+                            {formData.creater_name || 'Unknown'}
                         </span>
                     </div>
 
