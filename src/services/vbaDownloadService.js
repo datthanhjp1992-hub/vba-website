@@ -4,7 +4,7 @@
  */
 
 // Import template trực tiếp từ thư mục src
-import templateContent from '../template/VBAModule.txt';
+import VBAModuleDownloadContent from '../template/VBAModule';
 // Import VBAFunctionService để tăng download count
 import VBAFunctionService from './vbaFunctionService';
 
@@ -49,8 +49,8 @@ class VBADownloadService {
     static loadTemplate() {
         try {
             // Trả về template đã import (nếu có)
-            if (templateContent) {
-                return templateContent;
+            if (VBAModuleDownloadContent) {
+                return VBAModuleDownloadContent;
             }
             
             // Fallback nếu không import được
@@ -149,24 +149,49 @@ class VBADownloadService {
      * @param {string} filename - Tên file
      */
     static downloadFile(content, filename) {
-        // Tạo blob từ content
+        // Kiểm tra nếu content là data URL base64
+        if (content.startsWith('data:text/plain;base64,')) {
+            // Trích xuất phần base64
+            const base64Content = content.replace('data:text/plain;base64,', '');
+            
+            try {
+                // Giải mã base64 thành binary
+                const binaryString = atob(base64Content);
+                const bytes = new Uint8Array(binaryString.length);
+                
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                // Tạo blob từ binary data
+                const blob = new Blob([bytes], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                this.triggerDownload(url, filename);
+                return;
+                
+            } catch (error) {
+                console.error('Error decoding base64 content:', error);
+                // Fallback to regular text
+            }
+        }
+        
+        // Nếu không phải base64, xử lý như bình thường
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        
-        // Tạo URL object
         const url = URL.createObjectURL(blob);
-        
-        // Tạo link element
+        this.triggerDownload(url, filename);
+    }
+
+    /**
+     * Helper function để trigger download
+     */
+    static triggerDownload(url, filename) {
         const link = document.createElement('a');
         link.href = url;
         link.download = filename;
-        
-        // Thêm vào DOM
         document.body.appendChild(link);
-        
-        // Trigger download
         link.click();
         
-        // Cleanup
         setTimeout(() => {
             document.body.removeChild(link);
             URL.revokeObjectURL(url);

@@ -1,4 +1,4 @@
-'-----------------------------------------
+const VBAModuleDownloadContent = `'-----------------------------------------
 'VBAID: {ID}
 'Author : {creater}
 'Created: {created_at}
@@ -6,4 +6,6 @@
 'Comment: {comment}
 '-----------------------------------------
 
-{content}
+{content}`;
+
+export default VBAModuleDownloadContent;
