@@ -319,6 +319,13 @@ const DialogAccountChange = ({ userId, onBack, onUpdateSuccess }) => {
                     setIsEmailAvailable(null);
                     setCheckEmailMessage('');
                 }
+                
+                // ⭐ Thêm delay trước khi refresh
+                setTimeout(() => {
+                    // Refresh toàn bộ trang
+                    window.location.reload();
+                }, 2000); // 2 giây sau khi thành công
+
             } else {
                 setMessage({
                     type: 'error',
