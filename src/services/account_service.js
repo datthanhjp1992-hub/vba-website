@@ -179,6 +179,42 @@ class AccountService {
     }
 
     /**
+     * Lấy thông tin LIKE, DOWNLOAD của người dùng
+     * @param {number} index - ID tài khoản
+     * @returns {Promise} Trả về Promise với thông tin like và download
+     */
+    static async getLikeDownloadByIndex(index) {
+        try {
+            const url = getApiUrl(`${API_ENDPOINTS.ACCOUNT.GET_LIKE_DOWNLOAD}/${index}`);
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                signal: AbortSignal.timeout(SERVER_CONFIG.TIMEOUT)
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || getErrorMessage(response.status));
+            }
+
+            return {
+                success: data.success,
+                data: data.data || data
+            };
+        } catch (error) {
+            if (error.name === 'TimeoutError') {
+                throw new Error('Request timeout. Vui lòng thử lại sau.');
+            }
+            console.error('Get like download error:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Cập nhật thông tin tài khoản
      * @param {number} index - ID tài khoản
      * @param {Object} userData - Dữ liệu cần cập nhật

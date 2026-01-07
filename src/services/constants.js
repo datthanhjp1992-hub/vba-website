@@ -24,7 +24,8 @@ export const API_ENDPOINTS = {
         VALIDATE_EMAIL: '/account/validate-email',
         DELETE: '/account/delete',
         TEST_EMAIL: '/account/test-email',
-        EMAIL_CHECK: '/account/email/check'
+        EMAIL_CHECK: '/account/email/check',
+        GET_LIKE_DOWNLOAD:'/api/account/getLikeDownloads/'   //<intuser_id>
     },
     
     // Database endpoints

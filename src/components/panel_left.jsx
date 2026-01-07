@@ -7,9 +7,7 @@ import {
     VALIDATION_RULES,
     ERROR_MESSAGES,
     getAuthorityName,
-    getAuthorityColor,
-    validateAccount,
-    validatePassword
+    getAuthorityColor
 } from '../services/constants';
 
 const LeftPanel = () => {
@@ -29,6 +27,12 @@ const LeftPanel = () => {
   });
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [currentView, setCurrentView] = useState('default');
+
+  // Hiển thị số lượng Like Download
+  const [likeDownloadCount,setLikeDownloadCount]= useState({
+    like:0,
+    download:0
+  });            
 
   // Chuyển về trang default
   const handleBackToHome = () => {
@@ -80,6 +84,21 @@ const LeftPanel = () => {
         setFormData({ account: '', password: '' });
         console.log('Đăng nhập thành công:', result.data);
         
+        // Load số lượng like và download sau khi đăng nhập thành công
+        try {
+          const downloadResult = await AccountService.getLikeDownloadByIndex(result.data.index);
+          if (downloadResult.success && downloadResult.data) {
+            setLikeDownloadCount({
+              like: downloadResult.data.total_likes || 0,
+              download: downloadResult.data.total_downloads || 0
+            });
+            console.log('Đã load số lượng like/download:', downloadResult.data);
+          }
+        } catch (downloadError) {
+          console.error('Không thể load số lượng like/download:', downloadError);
+          // Không hiển thị lỗi cho người dùng vì đây chỉ là thông tin thêm
+        }
+        
         // Mở luôn hồ sơ cá nhân sau khi đăng nhập
         if (window.showAccountDetails && result.data.index) {
           // Thêm setTimeout để đảm bảo UI đã cập nhật
@@ -101,6 +120,9 @@ const LeftPanel = () => {
   // Xử lý đăng xuất
   const handleLogout = () => {
     logout(); // Sử dụng context logout
+    
+    // Reset số lượng like/download về 0
+    setLikeDownloadCount({ like: 0, download: 0 });
     
     if (window.resetToDefaultView) {
       window.resetToDefaultView();
@@ -214,6 +236,21 @@ const LeftPanel = () => {
           <p>👋 Chào mừng trở lại!</p>
           <p>📌 Tài khoản: <strong>{currentUser?.account}</strong></p>
           <p>👤 Tên hiển thị: <strong>{currentUser?.username}</strong></p>
+          
+          {/* Hiển thị thông tin like và download */}
+          <div className="user-stats">
+            <div className="stat-item">
+              <span className="stat-icon">👍</span>
+              <span className="stat-label">Like:</span>
+              <span className="stat-value">{likeDownloadCount.like}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-icon">⬇️</span>
+              <span className="stat-label">Download:</span>
+              <span className="stat-value">{likeDownloadCount.download}</span>
+            </div>
+          </div>
+          
           {/* Hiển thị thông tin khác nếu cần */}
         </div>
         <button 
@@ -226,6 +263,30 @@ const LeftPanel = () => {
       </div>
     );
   };
+
+  // Load số lượng like/download khi component mount hoặc khi user thay đổi
+  useEffect(() => {
+    const loadUserStats = async () => {
+      if (isAuthenticated && currentUser?.index) {
+        try {
+          const result = await AccountService.getLikeDownloadByIndex(currentUser.index);
+          if (result.success && result.data) {
+            setLikeDownloadCount({
+              like: result.data.total_likes || 0,
+              download: result.data.total_downloads || 0
+            });
+          }
+        } catch (error) {
+          console.error('Không thể load số lượng like/download:', error);
+        }
+      } else {
+        // Reset về 0 nếu không đăng nhập
+        setLikeDownloadCount({ like: 0, download: 0 });
+      }
+    };
+
+    loadUserStats();
+  }, [isAuthenticated, currentUser]);
 
   return (
     <aside className="left-panel">
