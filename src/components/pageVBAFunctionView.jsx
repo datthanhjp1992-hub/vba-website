@@ -561,7 +561,7 @@ const PageVBAFunctionView = () => {
                                             </td>
                                             <td className="col-creator">
                                                 <div className="creator-cell">
-                                                    {func.creater_name || `User ${func.creater}`}
+                                                    {func.creator_Full_Name || `User ${func.creater}`}
                                                 </div>
                                             </td>
                                         </tr>
