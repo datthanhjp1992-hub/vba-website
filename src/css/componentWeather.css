@@ -1,20 +1,21 @@
 /* Container chính */
 #comWeather-container.comWeather-container {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    max-width: 400px;
+    max-width: 500px;
     margin: 20px auto;
     padding: 0 15px;
+    transition: all 0.3s ease;
   }
   
   /* Card thời tiết */
   #comWeather-card.comWeather-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 20px;
-    padding: 25px;
     color: white;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
   }
   
   #comWeather-card.comWeather-card::before {
@@ -34,16 +35,56 @@
     100% { transform: rotate(360deg); }
   }
   
-  /* Header */
+  /* Card thu nhỏ */
+  #comWeather-card.comWeather-card-compact {
+    padding: 15px;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  /* Card phóng to */
+  #comWeather-card.comWeather-card-expanded {
+    padding: 25px;
+  }
+  
+  /* Nút chuyển đổi */
+  .comWeather-toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .comWeather-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+  
+  /* Header phóng to */
   #comWeather-header.comWeather-header {
-    text-align: center;
     margin-bottom: 25px;
+  }
+  
+  .comWeather-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
   }
   
   #comWeather-title.comWeather-title {
     font-size: 24px;
     font-weight: 700;
-    margin: 0 0 10px 0;
+    margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   
@@ -53,11 +94,35 @@
     margin: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
   }
   
-  /* Nội dung chính */
+  /* Header thu nhỏ */
+  #comWeather-compact-header.comWeather-compact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  #comWeather-compact-location.comWeather-compact-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    margin-left: 10px;
+  }
+  
+  #comWeather-compact-location-text.comWeather-compact-location-text {
+    font-size: 14px;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  
+  /* Nội dung phóng to */
   #comWeather-main.comWeather-main {
     text-align: center;
     margin-bottom: 25px;
@@ -89,6 +154,72 @@
     margin: 10px 0 0 0;
     opacity: 0.9;
     text-transform: capitalize;
+  }
+  
+  /* Nội dung thu nhỏ */
+  #comWeather-compact-content.comWeather-compact-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #comWeather-compact-main.comWeather-compact-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  #comWeather-compact-icon.comWeather-compact-icon {
+    font-size: 32px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+  
+  #comWeather-compact-temp.comWeather-compact-temp {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  
+  #comWeather-compact-desc.comWeather-compact-desc {
+    font-size: 12px;
+    opacity: 0.9;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Footer thu nhỏ */
+  #comWeather-compact-footer.comWeather-compact-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  #comWeather-compact-refresh.comWeather-compact-refresh {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  #comWeather-compact-refresh.comWeather-compact-refresh:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+  
+  #comWeather-compact-time.comWeather-compact-time {
+    font-size: 10px;
+    opacity: 0.7;
   }
   
   /* Chi tiết thời tiết */
@@ -130,13 +261,17 @@
     font-weight: 600;
   }
   
-  /* Footer */
+  /* Footer phóng to */
   #comWeather-footer.comWeather-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 20px;
+  }
+  
+  .comWeather-footer-left {
+    flex: 1;
   }
   
   #comWeather-updated.comWeather-updated {
@@ -208,7 +343,7 @@
   
   /* Responsive */
   @media (max-width: 480px) {
-    #comWeather-card.comWeather-card {
+    #comWeather-card.comWeather-card-expanded {
       padding: 20px;
     }
     
@@ -222,5 +357,44 @@
     
     #comWeather-icon.comWeather-icon {
       font-size: 40px;
+    }
+    
+    #comWeather-compact-main.comWeather-compact-main {
+      gap: 10px;
+    }
+    
+    #comWeather-compact-temp.comWeather-compact-temp {
+      font-size: 24px;
+    }
+  }
+  
+  /* Animation cho chuyển đổi */
+  .comWeather-card-compact {
+    animation: comWeather-slideUp 0.3s ease;
+  }
+  
+  .comWeather-card-expanded {
+    animation: comWeather-slideDown 0.3s ease;
+  }
+  
+  @keyframes comWeather-slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0.8;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes comWeather-slideDown {
+    from {
+      transform: translateY(-20px);
+      opacity: 0.8;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
     }
   }

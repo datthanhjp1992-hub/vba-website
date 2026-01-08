@@ -7,6 +7,8 @@ const ComponentWeather = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     const getWeather = async () => {
@@ -28,6 +30,7 @@ const ComponentWeather = () => {
         const data = await fetchWeatherData(latitude, longitude);
         setWeatherData(data);
         setError(null);
+        setLastUpdated(new Date());
       } catch (err) {
         console.error('Error fetching weather:', err);
         setError('Không thể lấy thông tin thời tiết. Vui lòng kiểm tra kết nối và cho phép quyền truy cập vị trí.');
@@ -44,42 +47,64 @@ const ComponentWeather = () => {
     }
   }, []);
 
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const { latitude, longitude } = position.coords;
+      const data = await fetchWeatherData(latitude, longitude);
+      setWeatherData(data);
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error('Error refreshing weather:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getWeatherIcon = (code) => {
     const iconMap = {
-      0: '☀️', // Clear sky
-      1: '🌤️', // Mainly clear
-      2: '⛅', // Partly cloudy
-      3: '☁️', // Overcast
-      45: '🌫️', // Fog
-      48: '🌫️', // Depositing rime fog
-      51: '🌦️', // Light drizzle
-      53: '🌦️', // Moderate drizzle
-      55: '🌧️', // Dense drizzle
-      61: '🌧️', // Slight rain
-      63: '🌧️', // Moderate rain
-      65: '⛈️', // Heavy rain
-      71: '❄️', // Slight snow
-      73: '❄️', // Moderate snow
-      75: '❄️', // Heavy snow
-      80: '🌦️', // Slight rain showers
-      81: '🌦️', // Moderate rain showers
-      82: '⛈️', // Violent rain showers
-      85: '🌨️', // Slight snow showers
-      86: '🌨️', // Heavy snow showers
-      95: '⛈️', // Thunderstorm
-      96: '⛈️', // Thunderstorm with slight hail
-      99: '⛈️', // Thunderstorm with heavy hail
+      0: '☀️',
+      1: '🌤️',
+      2: '⛅',
+      3: '☁️',
+      45: '🌫️',
+      48: '🌫️',
+      51: '🌦️',
+      53: '🌦️',
+      55: '🌧️',
+      61: '🌧️',
+      63: '🌧️',
+      65: '⛈️',
+      71: '❄️',
+      73: '❄️',
+      75: '❄️',
+      80: '🌦️',
+      81: '🌦️',
+      82: '⛈️',
+      85: '🌨️',
+      86: '🌨️',
+      95: '⛈️',
+      96: '⛈️',
+      99: '⛈️',
     };
     
     return iconMap[code] || '🌡️';
   };
 
   const getTemperatureColor = (temp) => {
-    if (temp <= 0) return '#4dabf7'; // Lạnh
-    if (temp <= 10) return '#74c0fc'; // Mát
-    if (temp <= 25) return '#40c057'; // Ấm
-    if (temp <= 35) return '#ff922b'; // Nóng
-    return '#fa5252'; // Rất nóng
+    if (temp <= 0) return '#4dabf7';
+    if (temp <= 10) return '#74c0fc';
+    if (temp <= 25) return '#40c057';
+    if (temp <= 35) return '#ff922b';
+    return '#fa5252';
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
   };
 
   if (loading) {
@@ -114,13 +139,85 @@ const ComponentWeather = () => {
     return null;
   }
 
+  // Component thu nhỏ (Compact view)
+  if (!isExpanded) {
+    return (
+      <div id="comWeather-container" className="comWeather-container">
+        <div id="comWeather-card" className="comWeather-card comWeather-card-compact">
+          <div id="comWeather-compact-header" className="comWeather-compact-header">
+            <button 
+              id="comWeather-expand-btn"
+              className="comWeather-toggle-btn"
+              onClick={toggleExpand}
+              title="Mở rộng"
+            >
+              ⬇️
+            </button>
+            <div id="comWeather-compact-location" className="comWeather-compact-location">
+              <span>📍</span>
+              <span id="comWeather-compact-location-text" className="comWeather-compact-location-text">
+                {location ? location.split(',')[0] : 'Vị trí hiện tại'}
+              </span>
+            </div>
+          </div>
+
+          <div id="comWeather-compact-content" className="comWeather-compact-content">
+            <div id="comWeather-compact-main" className="comWeather-compact-main">
+              <span id="comWeather-compact-icon" className="comWeather-compact-icon">
+                {getWeatherIcon(weatherData.weatherCode)}
+              </span>
+              <span 
+                id="comWeather-compact-temp"
+                className="comWeather-compact-temp"
+                style={{ color: getTemperatureColor(weatherData.temperature) }}
+              >
+                {Math.round(weatherData.temperature)}°C
+              </span>
+              <span id="comWeather-compact-desc" className="comWeather-compact-desc">
+                {weatherData.description}
+              </span>
+            </div>
+
+            <div id="comWeather-compact-footer" className="comWeather-compact-footer">
+              <button 
+                id="comWeather-compact-refresh"
+                className="comWeather-compact-refresh"
+                onClick={handleRefresh}
+                title="Làm mới"
+              >
+                🔄
+              </button>
+              {lastUpdated && (
+                <span id="comWeather-compact-time" className="comWeather-compact-time">
+                  {lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Component phóng to (Expanded view)
   return (
     <div id="comWeather-container" className="comWeather-container">
-      <div id="comWeather-card" className="comWeather-card">
+      <div id="comWeather-card" className="comWeather-card comWeather-card-expanded">
         <div id="comWeather-header" className="comWeather-header">
-          <h2 id="comWeather-title" className="comWeather-title">
-            Thời tiết hiện tại
-          </h2>
+          <div className="comWeather-header-top">
+            <h2 id="comWeather-title" className="comWeather-title">
+              Thời tiết hiện tại
+            </h2>
+            <button 
+              id="comWeather-collapse-btn"
+              className="comWeather-toggle-btn"
+              onClick={toggleExpand}
+              title="Thu nhỏ"
+            >
+              ⬆️
+            </button>
+          </div>
+          
           {location && (
             <p id="comWeather-location" className="comWeather-location">
               📍 {location}
@@ -179,16 +276,23 @@ const ComponentWeather = () => {
         </div>
 
         <div id="comWeather-footer" className="comWeather-footer">
-          <p id="comWeather-updated" className="comWeather-updated">
-            Cập nhật lúc: {new Date().toLocaleTimeString('vi-VN')}
-          </p>
-          <button 
-            id="comWeather-refresh-btn"
-            className="comWeather-refresh-btn"
-            onClick={() => window.location.reload()}
-          >
-            🔄 Làm mới
-          </button>
+          <div className="comWeather-footer-left">
+            {lastUpdated && (
+              <p id="comWeather-updated" className="comWeather-updated">
+                Cập nhật: {lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+              </p>
+            )}
+          </div>
+          
+          <div className="comWeather-footer-right">
+            <button 
+              id="comWeather-refresh-btn"
+              className="comWeather-refresh-btn"
+              onClick={handleRefresh}
+            >
+              🔄 Làm mới
+            </button>
+          </div>
         </div>
       </div>
     </div>
