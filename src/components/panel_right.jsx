@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/panel_right.css';
 import ComponentWeather from './componentWeather';
-
+import ComponentGoldPrice from './componentGoldPrice';
 const RightPanel = () => {
   
 
@@ -10,7 +10,9 @@ const RightPanel = () => {
       <div>
         <ComponentWeather />
       </div>
-      
+      <div>
+        <ComponentGoldPrice />
+      </div>
       
     </aside>
   );

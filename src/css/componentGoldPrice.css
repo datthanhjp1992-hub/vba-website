@@ -1,0 +1,297 @@
+/* Container chính của component */
+#comGoldContainer {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    position: relative;
+  }
+  
+  /* Tiêu đề */
+  #comGoldTitle {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+  }
+  
+  /* Container giá */
+  #comGoldPricesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Card giá */
+  .comGoldPriceCard {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #3498db;
+  }
+  
+  .comGoldPriceCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Icon */
+  .comGoldIcon {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    width: 60px;
+    text-align: center;
+  }
+  
+  #comGoldGoldIcon {
+    color: #FFD700; /* Vàng */
+  }
+  
+  #comGoldSilverIcon {
+    color: #C0C0C0; /* Bạc */
+  }
+  
+  /* Thông tin giá */
+  .comGoldPriceInfo {
+    flex: 1;
+  }
+  
+  .comGoldMetalName {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  
+  .comGoldPrice {
+    font-size: 2rem;
+    color: #27ae60;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .comGoldCurrency {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+  
+  /* Thời gian cập nhật */
+  #comGoldTimestamp {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  /* Loading spinner */
+  #comGoldLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  
+  .comGoldSpinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: comGoldSpin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes comGoldSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  #comGoldLoadingText {
+    color: #3498db;
+    font-size: 1.1rem;
+  }
+  
+  /* Error message */
+  #comGoldError {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+  
+  #comGoldErrorIcon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+  }
+  
+  #comGoldErrorMessage {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  #comGoldErrorSubMessage {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+  
+  /* Nút refresh */
+  #comGoldRefreshButton {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+  
+  #comGoldRefreshButton:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #1f639b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+  }
+  
+  #comGoldRefreshButton:active {
+    transform: translateY(0);
+  }
+  
+  #comGoldRefreshButton:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+    #comGoldContainer {
+      margin: 10px;
+      padding: 15px;
+    }
+    
+    .comGoldPrice {
+      font-size: 1.7rem;
+    }
+    
+    .comGoldIcon {
+      font-size: 2rem;
+      margin-right: 15px;
+      width: 50px;
+    }
+  }
+
+  /* Price details - chi tiết giá */
+.comGoldPriceDetails {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.comGoldPriceRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.comGoldPriceLabel {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.comGoldPriceValue {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.comGoldBuyPrice {
+  color: #27ae60 !important; /* Màu xanh cho giá mua */
+}
+
+.comGoldSellPrice {
+  color: #e74c3c !important; /* Màu đỏ cho giá bán */
+}
+
+.comGoldSpread {
+  color: #f39c12 !important; /* Màu cam cho spread */
+}
+
+/* Badge cho nguồn dữ liệu */
+#comGoldSourceBadge {
+  display: inline-block;
+  padding: 3px 10px;
+  margin-left: 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.comGoldSourceSwissquote {
+  background: linear-gradient(135deg, #FF0000 0%, #FF6B6B 100%);
+  color: white;
+  border: 1px solid #FF0000;
+}
+
+.comGoldSourceRealtime {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border: 1px solid #27ae60;
+}
+
+.comGoldSourceFallback {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: 1px solid #e74c3c;
+}
+
+/* Update indicator */
+#comGoldUpdateIndicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.7rem;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.comGoldLiveDot {
+  width: 8px;
+  height: 8px;
+  background-color: #27ae60;
+  border-radius: 50%;
+  animation: comGoldPulse 2s infinite;
+}
+
+@keyframes comGoldPulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
