@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
-import LikeDownloadService from '../services/likeDownloadService';
 import DialogAccountRegist from './dialogAccountRegist';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -34,7 +33,7 @@ const LeftPanel = () => {
     like:0,
     download:0
   });            
-  const [likeDownloadController, setLikeDownloadController] = useState(null);
+
   // Chuyển về trang default
   const handleBackToHome = () => {
     if (window.resetToDefaultView) {
@@ -267,39 +266,27 @@ const LeftPanel = () => {
 
   // Load số lượng like/download khi component mount hoặc khi user thay đổi
   useEffect(() => {
-    if (isAuthenticated && currentUser?.index) {
-      // Bắt đầu kiểm tra định kỳ
-      const controller = LikeDownloadService.startPeriodicCheck(
-        currentUser.index,
-        (result) => {
+    const loadUserStats = async () => {
+      if (isAuthenticated && currentUser?.index) {
+        try {
+          const result = await AccountService.getLikeDownloadByIndex(currentUser.index);
           if (result.success && result.data) {
             setLikeDownloadCount({
-              like: result.data.like,
-              download: result.data.download
+              like: result.data.total_likes || 0,
+              download: result.data.total_downloads || 0
             });
           }
+        } catch (error) {
+          console.error('Không thể load số lượng like/download:', error);
         }
-      );
-      
-      setLikeDownloadController(controller);
-    } else {
-      // Reset về 0 nếu không đăng nhập
-      setLikeDownloadCount({ like: 0, download: 0 });
-      
-      // Dừng kiểm tra nếu có
-      if (likeDownloadController) {
-        likeDownloadController.stop();
-        setLikeDownloadController(null);
-      }
-    }
-
-    // Cleanup khi component unmount
-    return () => {
-      if (likeDownloadController) {
-        likeDownloadController.stop();
+      } else {
+        // Reset về 0 nếu không đăng nhập
+        setLikeDownloadCount({ like: 0, download: 0 });
       }
     };
-  }, [isAuthenticated, currentUser?.index]);
+
+    loadUserStats();
+  }, [isAuthenticated, currentUser]);
 
   return (
     <aside className="left-panel">

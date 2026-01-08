@@ -177,12 +177,6 @@ export const CONNECTION_TEST = {
     TEST_ENDPOINT: '/test'
 };
 
-// ==================== LIKEDOWNLOAD INTERVAL TIME ====================
-export const LIKE_DOWNLOAD_INTERVAL ={
-    INTERVAL: 60000, // 60 giây
-    TIMEOUT: 10000   // 10 giây
-};
-
 export const CONNECTION_STATUS = {
     CONNECTED: 'connected',
     DISCONNECTED: 'disconnected',
