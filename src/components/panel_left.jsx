@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/panel_left.css';
 import AccountService from '../services/account_service';
+import LikeDownloadService from '../services/likeDownloadService';
 import DialogAccountRegist from './dialogAccountRegist';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -27,7 +28,7 @@ const LeftPanel = () => {
   });
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [currentView, setCurrentView] = useState('default');
-
+  const [likeDownloadController, setLikeDownloadController] = useState(null);
   // Hiển thị số lượng Like Download
   const [likeDownloadCount,setLikeDownloadCount]= useState({
     like:0,
@@ -266,27 +267,39 @@ const LeftPanel = () => {
 
   // Load số lượng like/download khi component mount hoặc khi user thay đổi
   useEffect(() => {
-    const loadUserStats = async () => {
-      if (isAuthenticated && currentUser?.index) {
-        try {
-          const result = await AccountService.getLikeDownloadByIndex(currentUser.index);
+    if (isAuthenticated && currentUser?.index) {
+      // Bắt đầu kiểm tra định kỳ
+      const controller = LikeDownloadService.startPeriodicCheck(
+        currentUser.index,
+        (result) => {
           if (result.success && result.data) {
             setLikeDownloadCount({
-              like: result.data.total_likes || 0,
-              download: result.data.total_downloads || 0
+              like: result.data.like,
+              download: result.data.download
             });
           }
-        } catch (error) {
-          console.error('Không thể load số lượng like/download:', error);
         }
-      } else {
-        // Reset về 0 nếu không đăng nhập
-        setLikeDownloadCount({ like: 0, download: 0 });
+      );
+      
+      setLikeDownloadController(controller);
+    } else {
+      // Reset về 0 nếu không đăng nhập
+      setLikeDownloadCount({ like: 0, download: 0 });
+      
+      // Dừng kiểm tra nếu có
+      if (likeDownloadController) {
+        likeDownloadController.stop();
+        setLikeDownloadController(null);
+      }
+    }
+
+    // Cleanup khi component unmount
+    return () => {
+      if (likeDownloadController) {
+        likeDownloadController.stop();
       }
     };
-
-    loadUserStats();
-  }, [isAuthenticated, currentUser]);
+  }, [isAuthenticated, currentUser?.index]);
 
   return (
     <aside className="left-panel">
