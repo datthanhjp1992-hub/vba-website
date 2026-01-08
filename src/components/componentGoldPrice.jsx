@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchMetalPrices, formatPrice, formatNumber, formatSource } from '../services/componentGoldPrice';
 import '../css/componentGoldPrice.css';
+import {GOLD_PRICE_INTERVAL} from '../services/constants';
 
 const ComponentGoldPrice = () => {
   const [prices, setPrices] = useState({
@@ -59,8 +60,8 @@ const ComponentGoldPrice = () => {
   useEffect(() => {
     loadPrices();
     
-    // Tự động refresh mỗi 30 giây (Swissquote cập nhật real-time)
-    const interval = setInterval(loadPrices, 30000);
+    // Tự động refresh mỗi 60 giây (Swissquote cập nhật real-time)
+    const interval = setInterval(loadPrices, GOLD_PRICE_INTERVAL.INTERVAL);
     
     return () => clearInterval(interval);
   }, []);

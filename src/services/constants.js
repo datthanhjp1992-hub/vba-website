@@ -179,8 +179,14 @@ export const CONNECTION_TEST = {
 
 // ==================== LIKEDOWNLOAD INTERVAL TIME ====================
 export const LIKE_DOWNLOAD_INTERVAL ={
-    INTERVAL: 60000, // 60 giÃ¢y
-    TIMEOUT: 10000   // 10 giÃ¢y
+    INTERVAL: 60000, // 60s 
+    TIMEOUT: 10000   // 10s
+};
+
+// ==================== GOLD PRICE INTERVAL TIME ====================
+export const GOLD_PRICE_INTERVAL ={
+    INTERVAL: 60000, // 60s
+    TIMEOUT: 10000   // 10s
 };
 
 export const CONNECTION_STATUS = {
@@ -478,6 +484,8 @@ export default {
     PAGINATION,
     UI_CONSTANTS,
     CONNECTION_TEST,
+    LIKE_DOWNLOAD_INTERVAL,
+    GOLD_PRICE_INTERVAL,
     CONNECTION_STATUS,
     CONNECTION_STATUS_COLORS,
     CONNECTION_STATUS_MESSAGES,
