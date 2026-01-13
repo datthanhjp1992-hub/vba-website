@@ -44,7 +44,7 @@ const TopPanel = () => {
             Danh sách Function
           </button>
           <button className="cta-button">
-            Đăng ký học
+            Donate
           </button>
         </nav>
 
