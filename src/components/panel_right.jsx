@@ -10,9 +10,6 @@ const RightPanel = () => {
       <div>
         <ComponentWeather />
       </div>
-      <div>
-        <ComponentGoldPrice />
-      </div>
       
     </aside>
   );
