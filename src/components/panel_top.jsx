@@ -14,6 +14,11 @@ const TopPanel = () => {
     setIsMenuOpen(false);
   };
 
+  const  handleShowPageDonate=()=>{
+    window.showPageDonate();
+    setIsMenuOpen(false);
+  }
+
   const handleShowVBAFunctionView =()=>{
     window.showPageVBAFunctionView();
     setIsMenuOpen(false);
@@ -43,7 +48,7 @@ const TopPanel = () => {
             <span className="nav-icon">💻</span>
             Danh sách Function
           </button>
-          <button className="cta-button">
+          <button className="cta-button" onClick={handleShowPageDonate}>
             Donate
           </button>
         </nav>

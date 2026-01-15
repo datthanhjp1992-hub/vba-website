@@ -1,0 +1,523 @@
+/* Container chính */
+.pageDonate-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.pageDonate-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+}
+
+.pageDonate-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.pageDonate-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Layout nội dung */
+.pageDonate-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+    .pageDonate-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Thông tin ngân hàng */
+.pageDonate-bank-info {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #e0e0e0;
+}
+
+.pageDonate-bank-info h3 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pageDonate-bank-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pageDonate-bank-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.pageDonate-bank-row:last-child {
+    border-bottom: none;
+}
+
+.pageDonate-bank-label {
+    font-weight: 600;
+    color: #4a5568;
+    min-width: 140px;
+}
+
+.pageDonate-bank-value {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.pageDonate-account-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pageDonate-copy-btn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.pageDonate-copy-btn:hover {
+    background: #3182ce;
+}
+
+/* Phần chọn mệnh giá */
+.pageDonate-amount-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pageDonate-amount-section h3 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Grid mệnh giá */
+.pageDonate-amount-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+@media (max-width: 480px) {
+    .pageDonate-amount-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pageDonate-amount-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.pageDonate-amount-btn:hover {
+    border-color: #4299e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+}
+
+.pageDonate-amount-btn-active {
+    border-color: #4299e1;
+    background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+    color: white;
+}
+
+.pageDonate-amount-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.pageDonate-amount-desc {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Mệnh giá tùy chỉnh */
+.pageDonate-custom-amount {
+    margin-bottom: 25px;
+}
+
+.pageDonate-custom-amount label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.pageDonate-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pageDonate-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.pageDonate-input:focus {
+    outline: none;
+    border-color: #4299e1;
+}
+
+.pageDonate-currency {
+    position: absolute;
+    right: 15px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.pageDonate-amount-preview {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f0fff4;
+    border-radius: 8px;
+    color: #276749;
+    font-size: 0.95rem;
+}
+
+/* Mô tả */
+.pageDonate-description {
+    margin-bottom: 25px;
+}
+
+.pageDonate-description label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+/* Nút chính */
+.pageDonate-generate-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 15px;
+}
+
+.pageDonate-generate-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+}
+
+.pageDonate-generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pageDonate-static-btn {
+    width: 100%;
+    padding: 14px;
+    background: #edf2f7;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pageDonate-static-btn:hover:not(:disabled) {
+    background: #e2e8f0;
+    border-color: #cbd5e0;
+}
+
+/* Phần QR bên phải */
+.pageDonate-qr-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.pageDonate-qr-section h3 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Hiển thị QR */
+.pageDonate-qr-display {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.pageDonate-qr-image {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+    display: block;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    background: white;
+}
+
+.pageDonate-qr-info {
+    text-align: left;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.pageDonate-amount-display {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.pageDonate-desc-display {
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.pageDonate-timestamp {
+    font-size: 0.9rem;
+    color: #718096;
+    font-style: italic;
+}
+
+/* Placeholder QR */
+.pageDonate-qr-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 2px dashed #cbd5e0;
+}
+
+.pageDonate-qr-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    color: #a0aec0;
+}
+
+.pageDonate-qr-placeholder p {
+    color: #718096;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* Loading spinner */
+.pageDonate-loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.pageDonate-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #e2e8f0;
+    border-top: 5px solid #4299e1;
+    border-radius: 50%;
+    animation: pageDonate-spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes pageDonate-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Nút hành động QR */
+.pageDonate-qr-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.pageDonate-action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pageDonate-verify-btn {
+    background: #fefcbf;
+    color: #744210;
+}
+
+.pageDonate-verify-btn:hover {
+    background: #faf089;
+}
+
+.pageDonate-download-btn {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.pageDonate-download-btn:hover {
+    background: #90cdf4;
+}
+
+/* Hướng dẫn */
+.pageDonate-instructions {
+    background: #f0fff4;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #48bb78;
+}
+
+.pageDonate-instructions h4 {
+    color: #276749;
+    margin-bottom: 15px;
+}
+
+.pageDonate-instructions ol {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.pageDonate-instructions li {
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+/* Thông báo cuối */
+.pageDonate-notice {
+    background: linear-gradient(135deg, #fed7e2 0%, #feebc8 100%);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #fc8181;
+}
+
+.pageDonate-notice p {
+    margin: 5px 0;
+    color: #744210;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .pageDonate-title {
+        font-size: 2rem;
+    }
+    
+    .pageDonate-qr-image {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .pageDonate-qr-actions {
+        flex-direction: column;
+    }
+}
+
+/* Error message */
+.pageDonate-error {
+    background: #fed7d7;
+    border: 2px solid #fc8181;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: pageDonate-fadeIn 0.3s ease;
+}
+
+@keyframes pageDonate-fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pageDonate-error-icon {
+    font-size: 1.2rem;
+    margin-right: 10px;
+    color: #c53030;
+}
+
+.pageDonate-error-message {
+    color: #c53030;
+    font-weight: 500;
+    flex: 1;
+}
+
+.pageDonate-error-close {
+    background: none;
+    border: none;
+    color: #c53030;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.pageDonate-error-close:hover {
+    background: rgba(197, 48, 48, 0.1);
+}

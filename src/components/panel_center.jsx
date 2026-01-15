@@ -15,6 +15,7 @@ import TelexVietnameseInput from './appTELEX';
 import PageContactInformation from './pageContactInformation';
 import PageVBAFunctionManager from './pageVBAFunctionManager';
 import PageVBAFunctionView from './pageVBAFunctionView';
+import PageDonate from './pageDonate';
 import DialogVBAFunctionDetails from './dialogVBAFunctionDetails';
 import HomePage from './pageHomePage';
 
@@ -72,6 +73,12 @@ const CenterPanel = () => {
       setCurrentView('pageVBAFunctionDetails');
     }
 
+    // Hàm show function details
+    window.showPageDonate =() =>{
+      console.log('Show Page Donate');
+      setCurrentView('pageDonate');
+    }
+
     // Hàm để hiển thị thay đổi tài khoản
     window.showAccountChangeDialog = (userId) => {
       console.log('Opening account change dialog for user ID:', userId);
@@ -100,6 +107,7 @@ const CenterPanel = () => {
       delete window.showPageVBAFunctionManager;
       delete window.showPageVBAFunctionView;
       delete window.showPageVBAFunctionDetails;
+      delete window.showPageDonate;
     };
   }, []);
 
@@ -176,6 +184,10 @@ const CenterPanel = () => {
       case 'pageVBAFunctionDetails':
         return (
           <DialogVBAFunctionDetails func={selectedFunction} />
+        );
+      case 'pageDonate':
+        return (
+          <PageDonate />
         );
 
       default:
