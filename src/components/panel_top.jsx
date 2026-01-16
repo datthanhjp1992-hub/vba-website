@@ -78,7 +78,7 @@ const TopPanel = () => {
               Code tham khảo
             </button>
             <button className="mobile-cta">
-              Đăng ký học ngay
+              Donate
             </button>
           </div>
         </div>
