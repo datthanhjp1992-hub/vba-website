@@ -1,5 +1,6 @@
+//[file name]: pageDonate.jsx
 import React, { useState, useEffect } from 'react';
-import { useDonateService } from '../services/pageDonate'; // Đổi từ default import sang named import
+import { useDonateService } from '../services/pageDonate';
 import '../css/pageDonate.css';
 
 const PageDonate = () => {
@@ -99,6 +100,7 @@ const PageDonate = () => {
             if (result.success) {
                 setQrData(result);
                 setShowStaticQR(false);
+                console.log('QR generated via VietQR:', result.qr_url);
             } else {
                 setError('Lỗi tạo mã QR: ' + result.error);
             }
@@ -119,6 +121,7 @@ const PageDonate = () => {
                 setStaticQR(result);
                 setShowStaticQR(true);
                 setQrData(null);
+                console.log('Static QR from VietQR:', result.qr_url);
             } else {
                 setError('Lỗi tạo mã QR tĩnh: ' + result.error);
             }
@@ -142,7 +145,7 @@ const PageDonate = () => {
         try {
             const result = await verifyQR(qrString);
             if (result.success) {
-                alert(`Mã QR ${result.valid ? 'HỢP LỆ' : 'KHÔNG HỢP LỆ'}\nCRC: ${result.crc}\nĐộ dài: ${result.length}`);
+                alert(`Mã QR ${result.valid ? 'HỢP LỆ' : 'KHÔNG HỢP LỆ'}\nĐộ dài: ${result.length} ký tự\nCRC: ${result.crc}`);
             } else {
                 setError('Lỗi kiểm tra QR: ' + result.error);
             }
@@ -180,6 +183,28 @@ const PageDonate = () => {
                     ✕
                 </button>
             </div>
+        );
+    };
+
+    // Hiển thị QR từ VietQR
+    const renderQRImage = () => {
+        const qrToShow = showStaticQR ? staticQR : qrData;
+        const qrUrl = qrToShow?.qr_url || qrToShow?.qr_image;
+        
+        if (!qrUrl) return null;
+
+        return (
+            <img 
+                src={qrUrl}
+                alt="Mã QR thanh toán"
+                className="pageDonate-qr-image"
+                onError={(e) => {
+                    console.error('Failed to load QR image:', qrUrl);
+                    e.target.style.display = 'none';
+                    setError('Không thể tải ảnh QR. Vui lòng thử lại.');
+                }}
+                onLoad={() => console.log('QR image loaded successfully:', qrUrl)}
+            />
         );
     };
 
@@ -221,6 +246,10 @@ const PageDonate = () => {
                                 <div className="pageDonate-bank-row">
                                     <span className="pageDonate-bank-label">Chủ tài khoản:</span>
                                     <span className="pageDonate-bank-value">{bankInfo.account_name}</span>
+                                </div>
+                                <div className="pageDonate-bank-row">
+                                    <span className="pageDonate-bank-label">Đối tác:</span>
+                                    <span className="pageDonate-bank-value">{bankInfo.provider}</span>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +306,7 @@ const PageDonate = () => {
                                 onChange={(e) => setDescription(e.target.value)}
                                 className="pageDonate-input"
                                 placeholder="Nhập lời nhắn của bạn"
+                                maxLength="50"
                             />
                         </div>
 
@@ -309,16 +339,16 @@ const PageDonate = () => {
                             <div className="pageDonate-loading">
                                 <div className="pageDonate-spinner"></div>
                                 <p>Đang tạo mã QR...</p>
+                                <p className="pageDonate-loading-note">
+                                    (Đang kết nối với VietQR.io)
+                                </p>
                             </div>
                         ) : showStaticQR && staticQR ? (
                             <div className="pageDonate-qr-display">
-                                <img 
-                                    src={`data:image/png;base64,${staticQR.qr_image}`}
-                                    alt="Mã QR tĩnh"
-                                    className="pageDonate-qr-image"
-                                />
+                                {renderQRImage()}
                                 <div className="pageDonate-qr-info">
-                                    <p><strong>QR Tĩnh</strong> - Không có số tiền cụ thể</p>
+                                    <p><strong>QR Tĩnh - MBBank via VietQR</strong></p>
+                                    <p>Không có số tiền cụ thể</p>
                                     <p className="pageDonate-timestamp">
                                         ⏰ {new Date(staticQR.timestamp).toLocaleString('vi-VN')}
                                     </p>
@@ -326,17 +356,16 @@ const PageDonate = () => {
                             </div>
                         ) : qrData ? (
                             <div className="pageDonate-qr-display">
-                                <img 
-                                    src={`data:image/png;base64,${qrData.qr_image}`}
-                                    alt="Mã QR thanh toán"
-                                    className="pageDonate-qr-image"
-                                />
+                                {renderQRImage()}
                                 <div className="pageDonate-qr-info">
                                     <p className="pageDonate-amount-display">
                                         💰 Số tiền: <strong>{formatCurrency(qrData.amount)}</strong>
                                     </p>
                                     <p className="pageDonate-desc-display">
                                         📝 {qrData.description}
+                                    </p>
+                                    <p className="pageDonate-bank-display">
+                                        🏦 {bankInfo?.bank_name || 'MBBank'}
                                     </p>
                                     <p className="pageDonate-timestamp">
                                         ⏰ {new Date(qrData.timestamp).toLocaleString('vi-VN')}
@@ -347,6 +376,9 @@ const PageDonate = () => {
                             <div className="pageDonate-qr-placeholder">
                                 <div className="pageDonate-qr-icon">📱</div>
                                 <p>Chọn mệnh giá và nhấn "Tạo Mã QR" để hiển thị mã QR thanh toán</p>
+                                <p className="pageDonate-qr-source">
+                                    Mã QR được tạo bởi <strong>VietQR.io</strong>
+                                </p>
                             </div>
                         )}
 
@@ -365,15 +397,29 @@ const PageDonate = () => {
                                         className="pageDonate-action-btn pageDonate-download-btn"
                                         onClick={() => {
                                             const qrToDownload = qrData || staticQR;
-                                            if (qrToDownload.qr_image) {
+                                            const qrUrl = qrToDownload.qr_url || qrToDownload.qr_image;
+                                            if (qrUrl) {
                                                 const link = document.createElement('a');
-                                                link.href = `data:image/png;base64,${qrToDownload.qr_image}`;
-                                                link.download = qrToDownload.filename || 'qrcode.png';
+                                                link.href = qrUrl;
+                                                link.download = qrToDownload.filename || 'vietqr_qrcode.png';
+                                                link.target = '_blank';
                                                 link.click();
                                             }
                                         }}
                                     >
                                         💾 Tải Xuống
+                                    </button>
+                                    <button
+                                        className="pageDonate-action-btn pageDonate-view-btn"
+                                        onClick={() => {
+                                            const qrToView = qrData || staticQR;
+                                            const qrUrl = qrToView.qr_url || qrToView.qr_image;
+                                            if (qrUrl) {
+                                                window.open(qrUrl, '_blank');
+                                            }
+                                        }}
+                                    >
+                                        👁️ Xem Ảnh Gốc
                                     </button>
                                 </>
                             )}
@@ -385,6 +431,7 @@ const PageDonate = () => {
                             <ol>
                                 <li>Chọn mệnh giá ủng hộ hoặc nhập số tiền tùy ý</li>
                                 <li>Nhấn "Tạo Mã QR Thanh Toán"</li>
+                                <li>Mã QR sẽ được tạo bởi VietQR.io</li>
                                 <li>Mở ứng dụng Mobile Banking trên điện thoại</li>
                                 <li>Chọn tính năng quét mã QR</li>
                                 <li>Quét mã QR trên màn hình</li>
@@ -398,6 +445,7 @@ const PageDonate = () => {
             {/* Thông báo */}
             <div className="pageDonate-notice">
                 <p>💝 <strong>Lưu ý:</strong> Mọi giao dịch đều được bảo mật. Bạn chỉ chuyển khoản khi đã kiểm tra kỹ thông tin.</p>
+                <p>Mã QR được tạo bởi <strong>VietQR.io</strong> - Dịch vụ mã QR chuẩn Ngân hàng Nhà nước Việt Nam</p>
                 <p>Nếu có vấn đề, vui lòng liên hệ qua email: support@example.com</p>
             </div>
         </div>
